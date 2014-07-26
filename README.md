@@ -1,7 +1,7 @@
 ani-sprite
 ==========
 
-character animation of sprite sheets
+character animation of sprite sheets [example](https://rawgit.com/wesjones/ani-sprite/master/index.html)
 
 #How to get started.
 First you need to copy the files you want into your project. There are multiple characters so only copy the characters that you want. You also need the AniSprite.js file.
