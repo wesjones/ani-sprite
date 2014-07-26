@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="build/characters/jailBird/jailBird.css">
+    <script src="build/AniSprite.js"></script>
+    <script src="build/characters/jailBird/jailBird.js"></script>
+    <script>
+        ani.engine.start(30);
+        var player1 = ani.jailBird('player1');
+        player1.x = 400;
+
+        function writeOptions(player, clsName) {
+            var i, ol = document.getElementsByClassName(clsName)[0];
+            for (i in window[player].frames) {
+                ol.innerHTML += "<li><a href=\"javascript:" + player + ".play('" + i + "')\">" + i + "</a></li>";
+            }
+        }
+    </script>
+</head>
+<body onload="writeOptions('player1', 'player1Controls')">
+<ol class="player1Controls">
+    <li><a href="javascript:player1.reverse = !player1.reverse">reverse</a></li>
+    <li><a href="javascript:player1.restoreDefault()">Restore Default</a></li>
+</ol>
+<div class="player1"></div>
+</body>
+</html>

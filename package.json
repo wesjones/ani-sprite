@@ -1,0 +1,17 @@
+{
+  "name": "AniSprite",
+  "version": "0.1.10",
+  "filename": "AniSprite",
+  "packageName": "ani",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-replace": "latest",
+    "grunt-contrib-copy": "latest"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}
