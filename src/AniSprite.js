@@ -1,15 +1,73 @@
-function AniSprite(clsName, character) {
-    var y = 200,
+function AniSprite(clsName, character, actions) {
+    var self = this,
+        y = 100,
         x = 100,
+        ground = 500,
         reverse = false,
         frames = character.frames,
         defaultAni = frames.stance,
         target = defaultAni,
         index = 0,
         wait = 0,
-        repeat = 0,
         speed = 0,
+        speedY = 0,
+        gravity = 0.8,
+        weight = 5,
         el;
+
+    // controls start
+    var keys = {}, map = {};
+    for (var i in actions) {
+        var action = actions[i];
+        keys[action] = false;
+        map[action.key] = i;
+    }
+
+    function start(action) {
+        keys[action] = true;
+    }
+
+    function stop(action) {
+        keys[action] = false;
+    }
+
+    function keyDown(event) {
+        var key = event.keyCode;
+        console.log(key);
+        if (map[key]) {
+            start(map[key]);
+        }
+    }
+
+    function keyUp(event) {
+        var key = event.keyCode;
+        if (map[key]) {
+            stop(map[key]);
+        }
+    }
+
+    // add some event listeners.
+    window.addEventListener('keydown', keyDown);
+    window.addEventListener('keyup', keyUp);
+//TODO: if jump and walking and walking happens first then no jump. need to fix. prioritize animations.
+    function controls() {
+        for (var i in keys) {
+            if (keys[i]) {
+                actions[i].action();
+                return;
+            }
+        }
+        if (self.index >= target.frames.length - 1) {
+            self.play('stance');
+        }
+    }
+
+    // make them public
+    this.start = start;
+    this.stop = stop;
+    this.actions = actions;
+
+    // controls end
 
     this.__defineGetter__("name", function () {
         return clsName;
@@ -23,12 +81,28 @@ function AniSprite(clsName, character) {
         frames = val;
     });
 
+    //index
+    this.__defineGetter__("index", function () {
+        return index;
+    });
+    this.__defineSetter__("index", function (val) {
+        index = val;
+    });
+
     //y
     this.__defineGetter__("y", function () {
         return y;
     });
     this.__defineSetter__("y", function (val) {
         y = isNaN(val) ? 0 : val;
+    });
+
+    //ground
+    this.__defineGetter__("ground", function () {
+        return ground;
+    });
+    this.__defineSetter__("ground", function (val) {
+        ground = isNaN(val) ? 0 : val;
     });
 
     //s
@@ -44,7 +118,11 @@ function AniSprite(clsName, character) {
         return reverse;
     });
     this.__defineSetter__("reverse", function (val) {
-        reverse = !!val;
+        val = !!val;
+        if (reverse !== val) {
+            speed *= -1;
+        }
+        reverse = val;
     });
 
     //speed
@@ -53,6 +131,26 @@ function AniSprite(clsName, character) {
     });
     this.__defineSetter__("speed", function (val) {
         speed = val;
+    });
+
+    //speedY
+    this.__defineGetter__("speedY", function () {
+        return speedY;
+    });
+    this.__defineSetter__("speedY", function (val) {
+        speedY = val;
+    });
+
+    //gravity
+    this.__defineGetter__("gravity", function () {
+        return gravity;
+    });
+    this.__defineSetter__("gravity", function (val) {
+        gravity = val;
+    });
+
+    this.__defineGetter__("wait", function () {
+        return wait;
     });
 
     //defaultAni
@@ -64,11 +162,13 @@ function AniSprite(clsName, character) {
     });
 
     this.play = function (name) {
-        if (target && target.end) {
-            target.end();
-        }
         if (frames[name] === target) {
-            repeat = 1;
+            return;
+        }
+        if (frames[name] && y < ground && !frames[name].inAir) {
+            return;
+        }
+        if (target.frames[index] && target.frames[index].immune) {
             return;
         }
         target = frames[name] || frames.stance;
@@ -102,11 +202,6 @@ function AniSprite(clsName, character) {
             fms = t.frames;
         }
         if (!fms[index]) {
-            if (repeat > 0) {
-                repeat -= 1;
-            } else {
-                target = defaultAni;
-            }
             index = 0;
             wait = 0;
             t = target;
@@ -116,7 +211,17 @@ function AniSprite(clsName, character) {
         if (index === 0 && t.start) {
             t.start();
         }
+        if (f.before) {
+            f.before();
+        }
         x += speed;
+        if (y < ground) {
+            speedY += gravity * weight;
+        } else {
+            speedY = 0;
+            y = ground;
+        }
+        y += speedY;
         if (!el) {
             el = document.getElementsByClassName(clsName)[0];
             el.classList.add(character.name);
@@ -140,10 +245,15 @@ function AniSprite(clsName, character) {
             index += 1;
             wait = 0;
         }
-        if (index === fms.length && t.end) {
+        if (f.after) {
+            f.after();
+        }
+        if (index === fms.length && t.end && wait >= t.wait) {
             t.end();
         }
     }
 
+    belt.async.dispatcher(this);//animations can throw events
+    engine.on(engine.events.UPDATE, controls);
     engine.on(engine.events.UPDATE, update);
 }
