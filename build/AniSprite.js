@@ -90,13 +90,27 @@
         return api;
     }();
     function AniSprite(clsName, character, actions) {
-        var self = this, y = 100, x = 100, ground = 500, reverse = false, frames = character.frames, defaultAni = frames.stance, target = defaultAni, index = 0, wait = 0, speed = 0, speedY = 0, gravity = .8, weight = 5, el;
-        var keys = {}, map = {};
-        for (var i in actions) {
-            var action = actions[i];
-            keys[action] = false;
-            map[action.key] = i;
+        var self = this, y = 100, x = 100, ground = 500, reverse = false, frames = character.frames, defaultAni = frames.stance, target = defaultAni, index = 0, wait = 0, speed = 0, speedY = 0, damage = 0, friction = 0, gravity = .8, weight = 5, el, weakSpots = [];
+        function Spot(x, y, radius) {
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
         }
+        function addNamesToActions() {
+            for (var i in character.frames) {
+                character.frames[i].name = i;
+            }
+        }
+        addNamesToActions();
+        var keys = {}, map = {};
+        function keyMaps() {
+            for (var i in actions) {
+                var action = actions[i];
+                keys[action] = false;
+                map[action.key] = i;
+            }
+        }
+        keyMaps();
         function start(action) {
             keys[action] = true;
         }
@@ -172,6 +186,7 @@
             val = !!val;
             if (reverse !== val) {
                 speed *= -1;
+                x += target.frames[0].width * (reverse ? -1 : 1);
             }
             reverse = val;
         });
@@ -186,6 +201,18 @@
         });
         this.__defineSetter__("speedY", function(val) {
             speedY = val;
+        });
+        this.__defineGetter__("damage", function() {
+            return damage;
+        });
+        this.__defineSetter__("damage", function(val) {
+            damage = val;
+        });
+        this.__defineGetter__("friction", function() {
+            return friction;
+        });
+        this.__defineSetter__("friction", function(val) {
+            friction = val;
         });
         this.__defineGetter__("gravity", function() {
             return gravity;
@@ -219,6 +246,56 @@
         this.restoreDefault = function() {
             defaultAni = frames.stance;
         };
+        this.createSpot = function(x, y, radius) {
+            return new Spot(x, y, radius);
+        };
+        this.strike = function(action, frame, x, y, radius) {
+            if (!this.reverse) {
+                x = frame.width - x;
+            } else {
+                x = x - frame.width;
+            }
+            this.dispatch("strike", action.name, this.createSpot(this.x + x, this.y - frame.height + y, radius));
+        };
+        this.weakSpots = function(action, frame, spots) {
+            var i = 0, len = spots.length, spot;
+            weakSpots.length = 0;
+            while (i < len) {
+                spot = spots[i];
+                if (!this.reverse) {
+                    spot.x = this.x + frame.width - spot.x;
+                } else {
+                    spot.x = this.x + spot.x - frame.width;
+                }
+                spot.y = this.y - frame.height + spot.y;
+                weakSpots[i] = spot;
+                i += 1;
+            }
+            this.dispatch("weakSpots", action.name, spots);
+        };
+        this.checkHit = function(hitSpot, dmg, spd) {
+            var i = 0, len = weakSpots.length, spot, dist;
+            while (i < len) {
+                spot = weakSpots[i];
+                dist = distanceBetweenPoints(hitSpot, spot);
+                if (dist < hitSpot.radius + spot.radius) {
+                    damage += dmg;
+                    speed += reverse ? spd : -spd;
+                    friction = .25;
+                    return true;
+                }
+                i += 1;
+            }
+            return false;
+        };
+        function distanceBetweenPoints(p1, p2) {
+            var xs = 0, ys = 0;
+            xs = p2.x - p1.x;
+            xs = xs * xs;
+            ys = p2.y - p1.y;
+            ys = ys * ys;
+            return Math.sqrt(xs + ys);
+        }
         function update() {
             var t, f, fms, depIndex, dep;
             if (target.dependencies) {
@@ -248,10 +325,10 @@
             }
             f = fms[index];
             if (index === 0 && t.start) {
-                t.start();
+                t.start(t);
             }
             if (f.before) {
-                f.before();
+                f.before(t);
             }
             x += speed;
             if (y < ground) {
@@ -261,6 +338,13 @@
                 y = ground;
             }
             y += speedY;
+            if (friction) {
+                speed *= friction;
+                if (speed < friction) {
+                    speed = 0;
+                    friction = 0;
+                }
+            }
             if (!el) {
                 el = document.getElementsByClassName(clsName)[0];
                 el.classList.add(character.name);
@@ -276,7 +360,7 @@
                 el.style.width = f.width + "px";
                 el.style.height = f.height + 2 + "px";
                 el.style.top = y + (f.oy || 0) - f.height + "px";
-                el.style.left = x + (f.ox || 0) + "px";
+                el.style.left = x + (self.reverse ? -f.width : 0) + (f.ox ? self.reverse ? f.ox * -1 : f.ox : 0) + "px";
             }
             if (f.wait && wait < f.wait) {
                 wait += 1;
@@ -285,10 +369,10 @@
                 wait = 0;
             }
             if (f.after) {
-                f.after();
+                f.after(t);
             }
             if (index === fms.length && t.end && wait >= t.wait) {
-                t.end();
+                t.end(t);
             }
         }
         belt.async.dispatcher(this);

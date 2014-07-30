@@ -6,17 +6,24 @@
 exports.jailBird = function(clsName, actions) {
     var plr, defaultWidth = 79, defaultHeight = 106, walkSpeed = 10, stay = function() {
         plr.index -= 1;
+    }, moveBy = function(n) {
+        plr.x += plr.reverse ? -n : n;
     }, frames = {
         stance: {
             start: function() {
-                plr.speed = 0;
+                if (!plr.friction) {
+                    plr.speed = 0;
+                }
             },
             frames: [ {
                 x: -20,
                 y: -10,
                 width: defaultWidth,
                 height: defaultHeight,
-                wait: 2
+                wait: 2,
+                before: function(action) {
+                    plr.weakSpots(action, this, [ plr.createSpot(defaultWidth * .5, 20, 20) ]);
+                }
             }, {
                 x: -20 - defaultWidth,
                 y: -10,
@@ -431,8 +438,8 @@ exports.jailBird = function(clsName, actions) {
                 width: 103,
                 height: 105,
                 oy: -3,
-                before: function() {
-                    plr.dispatch("strike", plr.x + this.width - 20, plr.y - this.height + 10, 20, 20);
+                before: function(action) {
+                    plr.strike(action, this, 5, 14, 20);
                 }
             }, {
                 x: -104,
@@ -467,8 +474,8 @@ exports.jailBird = function(clsName, actions) {
                 width: 143,
                 height: 108,
                 oy: -3,
-                before: function() {
-                    plr.dispatch("strike", plr.x + this.width - 60, plr.y - this.height + 10, 60, 40);
+                before: function(action) {
+                    plr.strike(action, this, 20, 30, 20);
                 }
             }, {
                 x: -452,
@@ -506,8 +513,8 @@ exports.jailBird = function(clsName, actions) {
                 height: 102,
                 ox: 20,
                 oy: -10,
-                before: function() {
-                    plr.dispatch("strike", plr.x + this.width - 30, plr.y - this.height * .5, this.height * .5, 40);
+                before: function(action) {
+                    plr.strike(action, this, 0, 60, 20);
                 }
             }, {
                 x: -759,
@@ -548,9 +555,9 @@ exports.jailBird = function(clsName, actions) {
                 ox: 0,
                 oy: -2,
                 wait: 2,
-                before: function() {
+                before: function(action) {
                     if (!plr.wait) {
-                        plr.dispatch("strike", plr.x + this.width - 30, plr.y - this.height * .5, this.height * .5, 40);
+                        plr.strike(action, this, 20, 20, 30);
                     }
                 }
             }, {
@@ -592,7 +599,13 @@ exports.jailBird = function(clsName, actions) {
                 x: -1730,
                 y: -1048,
                 width: 115,
-                height: 108
+                height: 108,
+                wait: 2,
+                before: function(action) {
+                    if (!plr.wait) {
+                        plr.strike(action, this, 10, 30, 20);
+                    }
+                }
             }, {
                 x: -1846,
                 y: -1051,
@@ -620,7 +633,13 @@ exports.jailBird = function(clsName, actions) {
                 x: -2241,
                 y: -1055,
                 width: 124,
-                height: 97
+                height: 97,
+                wait: 2,
+                before: function(action) {
+                    if (!plr.wait) {
+                        plr.strike(action, this, 10, 30, 20);
+                    }
+                }
             }, {
                 x: -2384,
                 y: -1050,
@@ -648,7 +667,13 @@ exports.jailBird = function(clsName, actions) {
                 x: -308,
                 y: -1240,
                 width: 130,
-                height: 105
+                height: 105,
+                wait: 2,
+                before: function(action) {
+                    if (!plr.wait) {
+                        plr.strike(action, this, 20, 20, 30);
+                    }
+                }
             }, {
                 x: -440,
                 y: -1227,
@@ -686,7 +711,13 @@ exports.jailBird = function(clsName, actions) {
                 x: -1017,
                 y: -1243,
                 width: 152,
-                height: 106
+                height: 106,
+                wait: 2,
+                before: function(action) {
+                    if (!plr.wait) {
+                        plr.strike(action, this, 20, 20, 30);
+                    }
+                }
             }, {
                 x: -1771,
                 y: -1243,
@@ -724,7 +755,13 @@ exports.jailBird = function(clsName, actions) {
                 x: -1749,
                 y: -1238,
                 width: 130,
-                height: 109
+                height: 109,
+                wait: 2,
+                before: function(action) {
+                    if (!plr.wait) {
+                        plr.strike(action, this, 20, 20, 30);
+                    }
+                }
             }, {
                 x: -1894,
                 y: -1241,
@@ -742,37 +779,193 @@ exports.jailBird = function(clsName, actions) {
                 x: -2093,
                 y: -1224,
                 width: 65,
-                height: 121
+                height: 121,
+                wait: 2,
+                before: function() {
+                    plr.y -= 20;
+                    moveBy(5);
+                }
             }, {
                 x: -2175,
                 y: -1230,
                 width: 60,
-                height: 95
+                height: 95,
+                wait: 2,
+                before: function() {
+                    plr.y -= 30;
+                    moveBy(5);
+                }
             }, {
                 x: -2240,
                 y: -1227,
                 width: 149,
-                height: 92
+                height: 92,
+                wait: 2,
+                before: function() {
+                    plr.y -= 30;
+                    moveBy(5);
+                }
             }, {
                 x: -2390,
                 y: -1229,
                 width: 136,
-                height: 98
+                height: 98,
+                wait: 2,
+                before: function() {
+                    plr.y -= 30;
+                    moveBy(5);
+                },
+                after: function(action) {
+                    if (plr.wait === this.wait - 1) {
+                        plr.strike(action, this, 10, 40, 30);
+                    }
+                }
             }, {
                 x: -2535,
                 y: -1228,
                 width: 80,
-                height: 105
+                height: 105,
+                before: function() {
+                    plr.y -= 20;
+                }
             }, {
                 x: -2635,
                 y: -1240,
                 width: 80,
-                height: 106
+                height: 106,
+                before: function() {
+                    plr.y -= 10;
+                }
             }, {
                 x: -2747,
                 y: -1241,
                 width: 77,
                 height: 105
+            }, {
+                x: -1377,
+                y: -198,
+                width: 82,
+                height: 96
+            } ]
+        },
+        hitFace: {
+            frames: [ {
+                x: -162,
+                y: -674,
+                width: 77,
+                height: 104,
+                immune: true
+            }, {
+                x: -241,
+                y: -673,
+                width: 79,
+                height: 105,
+                immune: true
+            }, {
+                x: -324,
+                y: -671,
+                width: 78,
+                height: 107,
+                immune: true
+            }, {
+                x: -413,
+                y: -670,
+                width: 79,
+                height: 108,
+                immune: true
+            }, {
+                x: -324,
+                y: -671,
+                width: 78,
+                height: 107,
+                immune: true
+            }, {
+                x: -241,
+                y: -673,
+                width: 79,
+                height: 105,
+                immune: true
+            }, {
+                x: -162,
+                y: -674,
+                width: 77,
+                height: 104
+            } ]
+        },
+        hitGut: {
+            frames: [ {
+                x: -522,
+                y: -676,
+                width: 80,
+                height: 102,
+                immune: true
+            }, {
+                x: -612,
+                y: -678,
+                width: 80,
+                height: 100,
+                immune: true
+            }, {
+                x: -701,
+                y: -683,
+                width: 76,
+                height: 95,
+                immune: true
+            }, {
+                x: -781,
+                y: -686,
+                width: 72,
+                height: 92,
+                immune: true
+            }, {
+                x: -701,
+                y: -683,
+                width: 76,
+                height: 95,
+                immune: true
+            }, {
+                x: -612,
+                y: -678,
+                width: 80,
+                height: 100,
+                immune: true
+            }, {
+                x: -522,
+                y: -676,
+                width: 80,
+                height: 102
+            } ]
+        },
+        duckHitFace: {
+            frames: [ {
+                x: -895,
+                y: -698,
+                width: 75,
+                height: 81,
+                immune: true
+            }, {
+                x: -983,
+                y: -695,
+                width: 78,
+                height: 84,
+                immune: true
+            }, {
+                x: -1078,
+                y: -694,
+                width: 82,
+                height: 85,
+                immune: true
+            }, {
+                x: -983,
+                y: -695,
+                width: 78,
+                height: 84,
+                immune: true
+            }, {
+                x: -895,
+                y: -698,
+                width: 75,
+                height: 81
             } ]
         }
     };

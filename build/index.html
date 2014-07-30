@@ -16,10 +16,23 @@
             left: -10px;
             width: 10px;
             height: 10px;
-            background-color: #FF0000;
+            background-color: rgba(0, 255, 0, 0.5);
+            z-index: 100;
+        }
+        .weakSpot {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 0, 0, 0.5);
+            z-index: 100;
         }
         .stepFrame {
             float: right;
+        }
+        .jailBird.black {
+            background: url(characters/jailBird/jailBird-sprite-black.png) no-repeat;
         }
     </style>
     <script>
@@ -146,16 +159,67 @@
                     player1.play('spinKick');
                 }
             },
+            hitFace: {
+                letter: 'I',
+                key: 73,
+                action: function () {
+                    player1.play('hitFace');
+                }
+            },
+            hitGut: {
+                letter: 'O',
+                key: 79,
+                action: function () {
+                    player1.play('hitGut');
+                }
+            },
+            duckHitFace: {
+                letter: 'P',
+                key: 80,
+                action: function () {
+                    player1.play('duckHitFace');
+                }
+            },
+
         });
 
-        player1.on('strike', function (event, x, y, width, height) {
-            console.log(arguments);
-            var strike = document.getElementsByClassName('strike')[0];
-            strike.style.left = x + 'px';
-            strike.style.top = y + 'px';
-            strike.style.width = width + 'px';
-            strike.style.height = height + 'px';
+        player1.on('strike', function (event, name, spot) {
+            var damage = 0, momentum = 0, strike = document.getElementsByClassName('strike')[0];
+            posSpot(strike, spot);
+
+            //TODO: need to implement damage and momentum for each action here.
+            if (name === "lightPunch") {
+                damage = 10;
+                momentum = 10 + Math.abs(player1.speed);
+            }
+
+            if (player2.checkHit(spot, damage, momentum)) {
+                player2.play('hitFace');
+                player2.damage += damage;
+                player2.momentum = momentum;
+            }
         });
+
+        var player2 = ani.jailBird('player2', {});
+        player2.x = 1000;
+        player2.reverse = true;
+
+        player2.on('weakSpots', function (event, name, spots) {
+            var i = 0, len = spots.length, spot, el = document.getElementsByClassName('weakSpot');
+            while (i < len) {
+                spot = spots[i];
+                posSpot(el[i], spot);
+                i += 1;
+            }
+        });
+
+        function posSpot(el, spot) {
+            el.style.left = spot.x - spot.radius + 'px';
+            el.style.top = spot.y - spot.radius + 'px';
+            el.style.width = spot.radius * 2 + 'px';
+            el.style.height = spot.radius * 2 + 'px';
+            el.style.borderRadius = spot.radius + 'px';
+        }
 
         function writeOptions(player, controlsClass, animationClass) {
             var i, item,
@@ -180,6 +244,9 @@
     <li><a href="javascript:ani.engine.step()">Step</a></li>
 </ul>
 <div class="strike"></div>
+<div class="weakSpot high"></div>
+<div class="weakSpot mid"></div>
+<div class="weakSpot low"></div>
 <div class="block">
     <div>Instructions</div>
     <ol class="player1Instructions">
@@ -191,6 +258,7 @@
         <li><a href="javascript:player1.reverse = !player1.reverse">reverse</a></li>
         <li><a href="javascript:player1.restoreDefault()">Restore Default</a></li>
     </ol>
+    <div class="player2 black"></div>
     <div class="player1"></div>
 </div>
 </body>
