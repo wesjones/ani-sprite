@@ -90,11 +90,12 @@
         return api;
     }();
     function AniSprite(clsName, character, actions) {
-        var self = this, y = 100, x = 100, ground = 500, reverse = false, frames = character.frames, defaultAni = frames.stance, target = defaultAni, index = 0, wait = 0, speed = 0, speedY = 0, damage = 0, friction = 0, gravity = .8, weight = 5, el, weakSpots = [];
-        function Spot(x, y, radius) {
+        var self = this, y = 100, x = 100, ground = 500, reverse = false, ducked = false, frames = character.frames, defaultAni = frames.stance, target = defaultAni, index = 0, wait = 0, speed = 0, speedY = 0, damage = 0, friction = 0, gravity = .8, weight = 5, el, weakSpots = [];
+        function Spot(x, y, radius, name) {
             this.x = x;
             this.y = y;
             this.radius = radius;
+            this.name = name;
         }
         function addNamesToActions() {
             for (var i in character.frames) {
@@ -190,6 +191,12 @@
             }
             reverse = val;
         });
+        this.__defineGetter__("ducked", function() {
+            return ducked;
+        });
+        this.__defineSetter__("ducked", function(val) {
+            ducked = !!val;
+        });
         this.__defineGetter__("speed", function() {
             return speed;
         });
@@ -246,8 +253,8 @@
         this.restoreDefault = function() {
             defaultAni = frames.stance;
         };
-        this.createSpot = function(x, y, radius) {
-            return new Spot(x, y, radius);
+        this.createSpot = function(x, y, radius, name) {
+            return new Spot(x, y, radius, name);
         };
         this.strike = function(action, frame, x, y, radius) {
             if (!this.reverse) {
@@ -274,19 +281,27 @@
             this.dispatch("weakSpots", action.name, spots);
         };
         this.checkHit = function(hitSpot, dmg, spd) {
-            var i = 0, len = weakSpots.length, spot, dist;
+            var i = 0, len = weakSpots.length, spot, dist = 0, lastDist = 100, selected = -1, name;
             while (i < len) {
                 spot = weakSpots[i];
                 dist = distanceBetweenPoints(hitSpot, spot);
-                if (dist < hitSpot.radius + spot.radius) {
-                    damage += dmg;
-                    speed += reverse ? spd : -spd;
-                    friction = .25;
-                    return true;
+                if (dist < hitSpot.radius + spot.radius && dist < lastDist) {
+                    selected = i;
                 }
+                lastDist = dist;
                 i += 1;
             }
-            return false;
+            if (selected !== -1) {
+                damage += dmg;
+                speed += reverse ? spd : -spd;
+                friction = .25;
+                name = typeof weakSpots[selected].name === "function" ? weakSpots[selected].name(dmg, spd) : weakSpots[selected].name;
+                if (name) {
+                    this.play(name);
+                }
+                return;
+            }
+            return;
         };
         function distanceBetweenPoints(p1, p2) {
             var xs = 0, ys = 0;

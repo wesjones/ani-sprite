@@ -4,6 +4,7 @@ function AniSprite(clsName, character, actions) {
         x = 100,
         ground = 500,
         reverse = false,
+        ducked = false,
         frames = character.frames,
         defaultAni = frames.stance,
         target = defaultAni,
@@ -19,10 +20,11 @@ function AniSprite(clsName, character, actions) {
         weakSpots = [];
 
     // private classes
-    function Spot(x, y, radius) {
+    function Spot(x, y, radius, name) {
         this.x = x;
         this.y = y;
         this.radius = radius;
+        this.name = name;
     }
 
     // process frames to add name to them.
@@ -147,6 +149,14 @@ function AniSprite(clsName, character, actions) {
         reverse = val;
     });
 
+    //ducked
+    this.__defineGetter__("ducked", function () {
+        return ducked;
+    });
+    this.__defineSetter__("ducked", function (val) {
+        ducked = !!val;
+    });
+
     //speed
     this.__defineGetter__("speed", function () {
         return speed;
@@ -218,8 +228,8 @@ function AniSprite(clsName, character, actions) {
         defaultAni = frames.stance;
     };
 
-    this.createSpot = function (x, y, radius) {
-        return new Spot(x, y, radius);
+    this.createSpot = function (x, y, radius, name) {
+        return new Spot(x, y, radius, name);
     };
 
     this.strike = function (action, frame, x, y, radius) {
@@ -249,19 +259,29 @@ function AniSprite(clsName, character, actions) {
     };
 
     this.checkHit = function (hitSpot, dmg, spd) {
-        var i = 0, len = weakSpots.length, spot, dist;
+        var i = 0, len = weakSpots.length, spot, dist = 0, lastDist = 100, selected = -1, name;
         while (i < len) {
             spot = weakSpots[i];
             dist = distanceBetweenPoints(hitSpot, spot);
-            if (dist < hitSpot.radius + spot.radius) {
-                damage += dmg;
-                speed += (reverse ? spd : -spd);
-                friction = 0.25;
-                return true;
+            if (dist < hitSpot.radius + spot.radius && dist < lastDist) {
+                selected = i;
             }
+            lastDist = dist;
             i += 1;
         }
-        return false;
+
+        if (selected !== -1) {
+            damage += dmg;
+            speed += (reverse ? spd : -spd);
+            friction = 0.25;
+            name = typeof weakSpots[selected].name === 'function' ? weakSpots[selected].name(dmg, spd) : weakSpots[selected].name;
+            if (name) {
+                this.play(name);
+            }
+            return;
+        }
+
+        return;
     };
 
     function distanceBetweenPoints(p1, p2) {

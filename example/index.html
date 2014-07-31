@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../build/characters/jailBird/jailBird.css">
+    <script src="../build/AniSprite.js"></script>
+    <script src="../build/characters/jailBird/jailBird.js"></script>
+    <script src="js/player1.js"></script>
+    <script src="js/player2.js"></script>
+    <style>
+        .block {
+            display: inline-block;
+            vertical-align: top;
+        }
+        .strike {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(0, 255, 0, 0.5);
+            z-index: 100;
+        }
+        .weakSpot {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 0, 0, 0.5);
+            z-index: 100;
+        }
+        .stepFrame {
+            float: right;
+        }
+        .jailBird.black {
+            background: url(../build/characters/jailBird/jailBird-sprite-black.png) no-repeat;
+        }
+    </style>
+    <script>
+        ani.engine.start(30);
+        // some code to draw hit spots.
+        function posSpot(el, spot) {
+            el.style.left = spot.x - spot.radius + 'px';
+            el.style.top = spot.y - spot.radius + 'px';
+            el.style.width = spot.radius * 2 + 'px';
+            el.style.height = spot.radius * 2 + 'px';
+            el.style.borderRadius = spot.radius + 'px';
+        }
+
+        // some code to write the options.
+        function writeOptions(player, controlsClass, animationClass) {
+            var i, item,
+                controls = document.getElementsByClassName(controlsClass)[0],
+                animations = document.getElementsByClassName(animationClass)[0];
+
+            for (i in player.actions) {
+                item = player.actions[i];
+                controls.innerHTML += "<li>" + item.letter + " = " + i + "</li>"
+            }
+
+            for (i in player.frames) {
+                animations.innerHTML += "<li>" + i + "</li>";
+            }
+        }
+    </script>
+</head>
+<body onload="writeOptions(player1, 'player1Instructions', 'player1Animations')">
+<ul class="stepFrame">
+    <li><a href="javascript:ani.engine.start(prompt('Enter Frames Per Second:'))">FPS</a></li>
+    <li><a href="javascript:ani.engine.stop()">Stop</a></li>
+    <li><a href="javascript:ani.engine.step()">Step</a></li>
+</ul>
+<div class="strike"></div>
+<div class="weakSpot high"></div>
+<div class="weakSpot mid"></div>
+<div class="weakSpot low"></div>
+<div class="block">
+    <div>Instructions</div>
+    <ol class="player1Instructions">
+    </ol>
+</div>
+<div class="block">
+    <div>Animations</div>
+    <ol class="player1Animations">
+        <li><a href="javascript:player1.reverse = !player1.reverse">reverse</a></li>
+        <li><a href="javascript:player1.restoreDefault()">Restore Default</a></li>
+    </ol>
+    <div class="player2 black"></div>
+    <div class="player1"></div>
+</div>
+</body>
+</html>

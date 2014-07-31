@@ -8,12 +8,24 @@ exports.jailBird = function(clsName, actions) {
         plr.index -= 1;
     }, moveBy = function(n) {
         plr.x += plr.reverse ? -n : n;
+    }, defaultWeakSpots = function(action) {
+        var spots = [ plr.createSpot(this.width * .5, 20, 20, "hitFace"), plr.createSpot(this.width * .5, this.height * .5, 20, "hitGut"), plr.createSpot(this.width * .5, this.height - 20, 20, function(damage, momentum) {
+            if (momentum > 10) {
+                return "trip";
+            }
+            return "hitGut";
+        }) ];
+        plr.weakSpots(action, this, spots);
+    }, duckWeakSpots = function(action) {
+        var spots = [ plr.createSpot(this.width * .5, this.height * .7, 30, "duckHitFace") ];
+        plr.weakSpots(action, this, spots);
     }, frames = {
         stance: {
             start: function() {
                 if (!plr.friction) {
                     plr.speed = 0;
                 }
+                plr.ducked = false;
             },
             frames: [ {
                 x: -20,
@@ -21,9 +33,7 @@ exports.jailBird = function(clsName, actions) {
                 width: defaultWidth,
                 height: defaultHeight,
                 wait: 2,
-                before: function(action) {
-                    plr.weakSpots(action, this, [ plr.createSpot(defaultWidth * .5, 20, 20) ]);
-                }
+                before: defaultWeakSpots
             }, {
                 x: -20 - defaultWidth,
                 y: -10,
@@ -82,7 +92,8 @@ exports.jailBird = function(clsName, actions) {
                 x: -916,
                 y: -10,
                 width: defaultWidth,
-                height: defaultHeight
+                height: defaultHeight,
+                before: defaultWeakSpots
             }, {
                 x: -834,
                 y: -10,
@@ -92,7 +103,10 @@ exports.jailBird = function(clsName, actions) {
                 x: -758,
                 y: -10,
                 width: defaultWidth,
-                height: defaultHeight
+                height: defaultHeight,
+                after: function() {
+                    plr.reverse = !plr.reverse;
+                }
             }, {
                 x: -834,
                 y: -10,
@@ -108,6 +122,7 @@ exports.jailBird = function(clsName, actions) {
         duck: {
             start: function() {
                 plr.speed = 0;
+                plr.ducked = true;
             },
             end: function() {
                 plr.defaultAni = {
@@ -125,7 +140,8 @@ exports.jailBird = function(clsName, actions) {
                 x: -1353,
                 y: -13,
                 width: 83,
-                height: 102
+                height: 102,
+                before: duckWeakSpots
             }, {
                 x: -1436,
                 y: -33,
@@ -144,12 +160,14 @@ exports.jailBird = function(clsName, actions) {
         duckTurn: {
             start: function() {
                 plr.speed = 0;
+                plr.ducked = true;
             },
             frames: [ {
                 x: -1029,
                 y: -40,
                 width: 89,
-                height: 75
+                height: 75,
+                before: duckWeakSpots
             }, {
                 x: -1124,
                 y: -40,
@@ -160,7 +178,9 @@ exports.jailBird = function(clsName, actions) {
                 y: -40,
                 width: 82,
                 height: 76,
-                wait: 2
+                after: function() {
+                    plr.reverse = !plr.reverse;
+                }
             }, {
                 x: -1124,
                 y: -40,
@@ -183,55 +203,64 @@ exports.jailBird = function(clsName, actions) {
                 y: -7,
                 width: 72,
                 height: 108,
-                oy: -4
+                oy: -4,
+                before: defaultWeakSpots
             }, {
                 x: -1710,
                 y: -7,
                 width: 72,
                 height: 108,
-                oy: -4
+                oy: -4,
+                before: defaultWeakSpots
             }, {
                 x: -1781,
                 y: -7,
                 width: 72,
                 height: 108,
-                oy: -4
+                oy: -4,
+                before: defaultWeakSpots
             }, {
                 x: -1852,
                 y: -7,
                 width: 72,
                 height: 108,
-                oy: -4
+                oy: -4,
+                before: defaultWeakSpots
             }, {
                 x: -1923,
                 y: -7,
                 width: 72,
                 height: 108,
-                oy: -4
+                oy: -4,
+                before: defaultWeakSpots
             }, {
                 x: -1994,
                 y: -7,
                 width: 79,
                 height: 108,
-                oy: -4
+                oy: -4,
+                before: defaultWeakSpots
             }, {
                 x: -2072,
                 y: -7,
                 width: 73,
                 height: 108,
-                oy: -4
+                oy: -4,
+                before: defaultWeakSpots
             }, {
                 x: -2218,
                 y: -7,
                 width: 72,
                 height: 108,
-                oy: -4
+                oy: -4,
+                before: defaultWeakSpots
             }, {
                 x: -2289,
                 y: -7,
                 width: 72,
                 height: 108,
-                oy: -4
+                oy: -4,
+                before: defaultWeakSpots
             } ]
         },
         jump: {
@@ -244,7 +273,7 @@ exports.jailBird = function(clsName, actions) {
                 width: 82,
                 height: 103,
                 immune: true,
-                before: function() {
+                before: function(action) {
                     if (plr.speed > 0) {
                         this.x = -1496;
                         this.y = -165;
@@ -264,6 +293,7 @@ exports.jailBird = function(clsName, actions) {
                         this.height = 82;
                         this.oy = 0;
                     }
+                    defaultWeakSpots.apply(this, [ action ]);
                 }
             }, {
                 x: -769,
@@ -271,69 +301,79 @@ exports.jailBird = function(clsName, actions) {
                 width: 82,
                 height: 103,
                 immune: true,
-                after: function() {
+                before: defaultWeakSpots,
+                after: function(action) {
                     plr.speedY = -40;
                     plr.y += plr.speedY;
+                    defaultWeakSpots.apply(this, [ action ]);
                 }
             }, {
                 x: -853,
                 y: -165,
                 width: 71,
                 height: 125,
-                before: function() {
+                before: function(action) {
                     if (plr.speedY < -30) {
                         plr.index -= 1;
                     }
+                    defaultWeakSpots.apply(this, [ action ]);
                 }
             }, {
                 x: -927,
                 y: -171,
                 width: 67,
-                height: 101
+                height: 101,
+                before: defaultWeakSpots
             }, {
                 x: -997,
                 y: -172,
                 width: 69,
-                height: 82
+                height: 82,
+                before: defaultWeakSpots
             }, {
                 x: -1068,
                 y: -172,
                 width: 70,
                 height: 79,
-                before: function() {
+                before: function(action) {
                     if (plr.speedY < -10) {
                         plr.index -= 1;
                     }
+                    defaultWeakSpots.apply(this, [ action ]);
                 }
             }, {
                 x: -1068,
                 y: -172,
                 width: 70,
-                height: 79
+                height: 79,
+                before: defaultWeakSpots
             }, {
                 x: -1142,
                 y: -174,
                 width: 69,
-                height: 98
+                height: 98,
+                before: defaultWeakSpots
             }, {
                 x: -1215,
                 y: -156,
                 width: 72,
                 height: 134,
-                before: function() {
+                before: function(action) {
                     if (plr.y < plr.ground - 20) {
                         plr.index -= 1;
                     }
+                    defaultWeakSpots.apply(this, [ action ]);
                 }
             }, {
                 x: -1288,
                 y: -176,
                 width: 81,
                 height: 123,
-                before: function() {
+                before: function(action) {
                     if (plr.y < plr.ground - 5) {
                         plr.index -= 1;
                     }
+                    defaultWeakSpots.apply(this, [ action ]);
                 }
             }, {
                 x: -1377,
@@ -342,7 +382,7 @@ exports.jailBird = function(clsName, actions) {
                 height: 96,
                 oy: 4,
                 wait: 1,
-                before: function() {
+                before: function(action) {
                     if (plr.speed > 0) {
                         this.x = -1573;
                         this.y = -159;
@@ -359,6 +399,7 @@ exports.jailBird = function(clsName, actions) {
                         this.width = 82;
                         this.height = 96;
                     }
+                    defaultWeakSpots.apply(this, [ action ]);
                 }
             } ]
         },
