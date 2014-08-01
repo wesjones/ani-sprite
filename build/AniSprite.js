@@ -90,7 +90,7 @@
         return api;
     }();
     function AniSprite(clsName, character, actions) {
-        var self = this, y = 100, x = 100, ground = 500, reverse = false, ducked = false, target = null, targetMaxDistance = 200, frames = character.frames, defaultAni = frames.stance, action = defaultAni, index = 0, wait = 0, speed = 0, speedY = 0, damage = 0, friction = 0, gravity = .8, weight = 5, el, weakSpots = [];
+        var self = this, y = 100, x = 100, ground = 500, reverse = false, ducked = false, target = null, targetMaxDistance = 400, frames = character.frames, defaultAni = frames.stance, action = defaultAni, index = 0, wait = 0, speed = 0, speedY = 0, damage = 0, friction = 0, gravity = .8, weight = 5, el, weakSpots = [];
         function Spot(x, y, radius, name) {
             this.x = x;
             this.y = y;
@@ -260,6 +260,20 @@
         this.__defineSetter__("defaultAni", function(val) {
             defaultAni = val;
         });
+        this.getDistanceToTarget = function() {
+            var t = {
+                x: self.target.x + self.target.width * .5,
+                y: self.target.y + self.target.height * .5
+            }, s = {
+                x: self.x + self.width * .5,
+                y: self.y + self.height * .5
+            };
+            return distanceBetweenPoints(s, t);
+        };
+        this.isTargetInRange = function() {
+            var dist = self.getDistanceToTarget();
+            return dist <= targetMaxDistance;
+        };
         this.isTargetInFront = function() {
             if (self.target) {
                 if (self.target) {

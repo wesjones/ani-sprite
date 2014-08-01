@@ -6,7 +6,7 @@ function AniSprite(clsName, character, actions) {
         reverse = false,
         ducked = false,
         target = null,// the target to look at.
-        targetMaxDistance = 200,
+        targetMaxDistance = 400,
         frames = character.frames,
         defaultAni = frames.stance,
         action = defaultAni,
@@ -243,10 +243,21 @@ function AniSprite(clsName, character, actions) {
         defaultAni = val;
     });
 
+    this.getDistanceToTarget = function () {
+        var t = {x: self.target.x + self.target.width * 0.5, y: self.target.y + self.target.height * 0.5},
+            s = {x: self.x + self.width * 0.5, y: self.y + self.height * 0.5};
+        return distanceBetweenPoints(s, t);
+    };
+
+    this.isTargetInRange = function () {
+        var dist = self.getDistanceToTarget();
+        return dist <= targetMaxDistance;
+    };
+
     this.isTargetInFront = function () {
         if (self.target) {
             if (self.target) {
-                if (self.target.x < x + self.width * 0.5 && !self.reverse) {
+                if (self.target.x < x + self.width * 0.5&& !self.reverse) {
                     return false;
                 } else if (self.target.x > x - self.width * 0.5 && self.reverse) {
                     return false;
