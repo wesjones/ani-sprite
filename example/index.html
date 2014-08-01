@@ -39,6 +39,8 @@
     </style>
     <script>
         ani.engine.start(30);
+        player1.target = player2;
+        player2.target = player1;
         // some code to draw hit spots.
         function posSpot(el, spot) {
             el.style.left = spot.x - spot.radius + 'px';

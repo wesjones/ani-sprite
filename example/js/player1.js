@@ -10,8 +10,13 @@ var player1 = ani.jailBird('player1', {
         letter: 'A',
         key: 65,
         action: function () {
-            player1.reverse = true;
-            player1.play('walk');
+            if (!player1.reverse && player1.isTargetInFront()) {
+                player1.play("walkBackward");
+            } else if (!player1.target && !player1.reverse) {
+                player1.play('turn');
+            } else {
+                player1.play('walk');
+            }
         }
     },
     duck: {
@@ -25,8 +30,13 @@ var player1 = ani.jailBird('player1', {
         letter: 'D',
         key: 68,
         action: function () {
-            player1.reverse = false;
-            player1.play('walk');
+            if (player1.reverse && player1.isTargetInFront()) {
+                player1.play("walkBackward");
+            } else if (!player1.target && player1.reverse) {
+                player1.play('turn');
+            } else {
+                player1.play('walk');
+            }
         }
     },
     blockHigh: {
