@@ -42,4 +42,7 @@ Now all you need to do manipulate the character. The character api is setup with
     player1.play('turn'); // this is how you run the turn animation.
     // NOTE: each player may have different animations. So check each character for it's own frames.
 
+The first thing that you should do to the character is use the player1.js file to add some hit's momentum to the event listener for strike.
+There are a few methods there, and flushing this out will affect the damage to player 2 so you can create a health bar.
+
 Here is an [example](https://rawgit.com/wesjones/ani-sprite/master/index.html). View the source and have fun.

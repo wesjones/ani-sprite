@@ -88,7 +88,7 @@ function AniSprite(clsName, character, actions) {
                 return;
             }
         }
-        if (self.index >= action.frames.length - 1) {
+        if (self.index > action.frames.length - 1) {
             self.play('stance');
         }
     }

@@ -162,6 +162,12 @@ player1.on('strike', function (event, name, spot) {
     if (name === "lightPunch") {
         damage = 10;
         momentum = 10 + Math.abs(player1.speed);
+    } else if (name === "hardPunch") {
+        damage = 15;
+        momentum = 15 + Math.abs(player1.speed);
+    } else if (name === "spinKick") {
+        damage = 50;
+        momentum = 50 + Math.abs(player1.speed);
     }
 
     player2.checkHit(spot, damage, momentum);
