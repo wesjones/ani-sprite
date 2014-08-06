@@ -1123,52 +1123,72 @@ exports.jailBird = function(clsName, actions) {
                 x: -1250,
                 y: -651,
                 width: 65,
-                height: 123
+                height: 123,
+                wait: 2
             }, {
                 x: -1315,
                 y: -665,
                 width: 84,
                 height: 109,
+                wait: 2,
+                oy: -10,
                 before: function() {
-                    moveBy(5);
+                    moveBy(-10);
                 }
             }, {
                 x: -1405,
                 y: -664,
                 width: 114,
                 height: 104,
+                wait: 2,
+                oy: -20,
                 before: function() {
-                    moveBy(5);
+                    moveBy(-10);
                 }
             }, {
                 x: -1523,
                 y: -663,
                 width: 136,
                 height: 96,
+                wait: 2,
+                oy: -30,
                 before: function() {
-                    moveBy(5);
+                    moveBy(-10);
                 }
             }, {
                 x: -1664,
                 y: -670,
                 width: 144,
                 height: 69,
+                wait: 2,
+                oy: -20,
                 before: function() {
-                    moveBy(5);
+                    moveBy(-10);
                 }
             }, {
                 x: -1824,
                 y: -655,
                 width: 108,
                 height: 91,
+                wait: 0,
+                oy: -10,
                 before: function() {
-                    moveBy(5);
+                    moveBy(-10);
+                },
+                after: function() {
+                    plr.play("getUp");
+                    plr.index = 0;
+                    plr.wait = 0;
                 }
-            }, {
+            } ]
+        },
+        fallDown: {
+            frames: [ {
                 x: -2055,
                 y: -688,
                 width: 105,
                 height: 78,
+                wait: 2,
                 before: function() {
                     moveBy(5);
                 }
@@ -1177,6 +1197,7 @@ exports.jailBird = function(clsName, actions) {
                 y: -703,
                 width: 137,
                 height: 68,
+                wait: 2,
                 before: function() {
                     moveBy(5);
                 }
@@ -1185,6 +1206,7 @@ exports.jailBird = function(clsName, actions) {
                 y: -727,
                 width: 145,
                 height: 41,
+                wait: 2,
                 before: function() {
                     moveBy(5);
                 }
@@ -1193,6 +1215,7 @@ exports.jailBird = function(clsName, actions) {
                 y: -729,
                 width: 139,
                 height: 42,
+                wait: 2,
                 before: function() {
                     moveBy(5);
                 }
@@ -1201,6 +1224,7 @@ exports.jailBird = function(clsName, actions) {
                 y: -723,
                 width: 128,
                 height: 48,
+                wait: 2,
                 before: function() {
                     moveBy(5);
                 }
@@ -1209,6 +1233,7 @@ exports.jailBird = function(clsName, actions) {
                 y: -729,
                 width: 139,
                 height: 42,
+                wait: 0,
                 after: function() {
                     plr.play("getUp");
                     plr.index = 0;
@@ -1221,22 +1246,26 @@ exports.jailBird = function(clsName, actions) {
                 x: -18,
                 y: -907,
                 width: 118,
-                height: 49
+                height: 49,
+                wait: 2
             }, {
                 x: -142,
                 y: -904,
                 width: 110,
-                height: 49
+                height: 49,
+                wait: 2
             }, {
                 x: -274,
                 y: -900,
                 width: 98,
-                height: 50
+                height: 50,
+                wait: 2
             }, {
                 x: -399,
                 y: -883,
                 width: 69,
-                height: 71
+                height: 71,
+                wait: 2
             }, {
                 x: -485,
                 y: -862,
