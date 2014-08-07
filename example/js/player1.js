@@ -162,13 +162,47 @@ player1.on('strike', function (event, name, spot) {
     if (name === "lightPunch") {
         damage = 10;
         momentum = 10 + Math.abs(player1.speed);
-    } else if (name === "hardPunch") {
-        damage = 15;
-        momentum = 15 + Math.abs(player1.speed);
+    } else if (name === "hardPunch" || name === "hardPunch2") {
+        if (player1.target.action === "blockHigh") {
+            damage = 1;
+            momentum = 10 + Math.abs(player1.speed);
+        } else {
+            damage = 15;
+            momentum = 15 + Math.abs(player1.speed);
+        }
     } else if (name === "spinKick") {
-        damage = 50;
-        momentum = 50 + Math.abs(player1.speed);
+        if (player1.target.action === "blockHigh") {
+            damage = 5;
+            momentum = 20 + Math.abs(player1.speed);
+            spot.name = player1.target.action;
+        } else {
+            damage = 50;
+            momentum = 50 + Math.abs(player1.speed);
+        }
+    } else if (name === "lowKick") {
+        if (player1.target.action === "blockLow") {
+            damage = 1;
+            momentum = 5 + Math.abs(player1.speed);
+            spot.name = player1.target.action;
+        } else {
+            damage = 25;
+            momentum = 15 + Math.abs(player1.speed);
+        }
     }
 
     player2.checkHit(spot, damage, momentum);
+});
+
+
+player1.on('weakSpots', function (event, name, spots) {
+    var i = 0, spot, el = document.getElementsByClassName('player1weakSpot'), len = el.length;
+    while (i < len) {
+        spot = spots[i];
+        if (spot) {
+            posSpot(el[i], spot);
+        } else {
+            posSpot(el[i], {x:0, y:0, radius:0, name:''})
+        }
+        i += 1;
+    }
 });

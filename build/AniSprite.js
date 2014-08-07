@@ -156,6 +156,9 @@
         this.__defineGetter__("name", function() {
             return clsName;
         });
+        this.__defineGetter__("action", function() {
+            return action.name;
+        });
         this.__defineGetter__("frames", function() {
             return frames;
         });
@@ -346,7 +349,11 @@
                 damage += dmg;
                 speed += reverse ? spd : -spd;
                 friction = .25;
-                name = typeof weakSpots[selected].name === "function" ? weakSpots[selected].name(dmg, spd) : weakSpots[selected].name;
+                if (hitSpot && hitSpot.name) {
+                    name = hitSpot.name;
+                } else {
+                    name = typeof weakSpots[selected].name === "function" ? weakSpots[selected].name(dmg, spd) : weakSpots[selected].name;
+                }
                 if (name) {
                     this.play(name);
                 }

@@ -104,6 +104,10 @@ function AniSprite(clsName, character, actions) {
         return clsName;
     });
 
+    this.__defineGetter__("action", function () {
+        return action.name;
+    });
+
     //frames
     this.__defineGetter__("frames", function () {
         return frames;
@@ -333,7 +337,11 @@ function AniSprite(clsName, character, actions) {
             damage += dmg;
             speed += (reverse ? spd : -spd);
             friction = 0.25;
-            name = typeof weakSpots[selected].name === 'function' ? weakSpots[selected].name(dmg, spd) : weakSpots[selected].name;
+            if (hitSpot && hitSpot.name) {
+                name = hitSpot.name;
+            } else {
+                name = typeof weakSpots[selected].name === 'function' ? weakSpots[selected].name(dmg, spd) : weakSpots[selected].name;
+            }
             if (name) {
                 this.play(name);
             }
