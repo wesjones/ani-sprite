@@ -72,6 +72,9 @@ module.exports = function (grunt) {
                 files: {
                     './build/characters/jailBird/jailBird.js': [
                         'src/characters/jailBird/**/*.js'
+                    ],
+                    './build/characters/soundNinja/soundNinja.js': [
+                        'src/characters/soundNinja/**/*.js'
                     ]
                 }
             }
