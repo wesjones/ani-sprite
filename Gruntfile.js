@@ -45,17 +45,19 @@ module.exports = function (grunt) {
                     ]
                 }
             },
-            build_min: {
+            sprite: {
                 options: {
-                    wrap: '<%= pkg.packageName %>',
-                    banner: '<%= banner %>',
-                    exportAll: true
+                    mangle: false,
+                    compress: false,
+                    preserveComments: 'some',
+                    beautify: true,
+                    exportAll: true,
+                    banner: '<%= banner %><%= wrapStart %>',
+                    footer: '<%= wrapEnd %>'
                 },
                 files: {
-                    './build/<%= pkg.filename %>.min.js': [
-                        'src/libs/**/*.js',
-                        'src/engine.js',
-                        'src/AniSprite.js'
+                    './build/SpriteMapper.js': [
+                        'src/SpriteMapper.js'
                     ]
                 }
             },

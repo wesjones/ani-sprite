@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sprite Map</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding: 0px;
+            margin: 0px;
+        }
+    </style>
+    <script src="../build/SpriteMapper.js"></script>
+    <script>
+        function start() {
+            var map = new ani.SpriteMapper();
+            map.url = '../build/characters/soundNinja/soundNinja-sprite.png';
+            map.width = 50;
+            map.height = 60;
+            map.init();
+        }
+    </script>
+</head>
+<body onload="start()">
+
+</body>
+</html>
