@@ -55,25 +55,34 @@ exports.SpriteMapper = function() {
         update();
         window.addEventListener("keydown", function(event) {
             console.log(event.keyCode);
-            var delta = event.shiftKey ? 10 : 1;
+            var delta = event.shiftKey ? 10 : 1, changed = false;
             if (event.keyCode === 39) {
                 self.x = x + delta;
+                changed = true;
             } else if (event.keyCode === 37) {
                 self.x = x - delta;
+                changed = true;
             } else if (event.keyCode === 38) {
                 self.y = y - delta;
+                changed = true;
             } else if (event.keyCode === 40) {
                 self.y = y + delta;
+                changed = true;
             } else if (event.keyCode === 87) {
                 self.height = height - delta;
+                changed = true;
             } else if (event.keyCode === 65) {
                 self.width = width - delta;
+                changed = true;
             } else if (event.keyCode === 83) {
                 self.height = height + delta;
+                changed = true;
             } else if (event.keyCode === 68) {
                 self.width = width + delta;
+                changed = true;
             } else if (event.keyCode === 88) {
                 output.pop();
+                changed = true;
             } else if (event.keyCode === 86) {
                 output.push({
                     x: -x,
@@ -81,19 +90,22 @@ exports.SpriteMapper = function() {
                     width: width,
                     height: height
                 });
+                changed = true;
             }
-            var str = "", i = 0;
-            while (i < output.length) {
-                str += JSON.stringify(output[i]) + "\n";
-                i += 1;
+            if (changed) {
+                var str = "", i = 0;
+                while (i < output.length) {
+                    str += JSON.stringify(output[i]) + "\n";
+                    i += 1;
+                }
+                str += JSON.stringify({
+                    x: -x,
+                    y: -y,
+                    width: width,
+                    height: height
+                }) + "\n";
+                content.innerHTML = "<pre>" + str + "</pre>";
             }
-            str += JSON.stringify({
-                x: -x,
-                y: -y,
-                width: width,
-                height: height
-            }) + "\n";
-            content.innerHTML = "<pre>" + str + "</pre>";
         });
     }
     self.__defineGetter__("url", function() {
