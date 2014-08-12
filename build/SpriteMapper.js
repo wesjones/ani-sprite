@@ -4,7 +4,7 @@
 */
 (function(exports, global){
 exports.SpriteMapper = function() {
-    var self = this, rendering = 0, dimensionsChange = true, imgData, anim, outline, content, url, scale = 4, x = 0, y = 0, width = 100, height = 100, bgWidth = 100, bgHeight = 100, el, css, srcCanvas, srcCtx, destCanvas, destCtx, grid, gridCtx, output = [];
+    var self = this, rendering = 0, dimensionsChange = true, imgData, anim, outline, content, url, scale = 4, x = 0, y = 0, width = 100, height = 100, bgWidth = 100, bgHeight = 100, el, css, srcWrapper, srcCanvas, srcCtx, destCanvas, destCtx, grid, gridCtx, output = [];
     function init() {
         el = document.createElement("div");
         el.className = "spriteMapper";
@@ -14,43 +14,17 @@ exports.SpriteMapper = function() {
         css.left = "0px";
         css.width = "100%";
         css.height = "100%";
-        srcCanvas = document.createElement("canvas");
-        el.appendChild(srcCanvas);
+        el.innerHTML = '<div class="srcWrapper" style="position:absolute;left:0px;right:0px;top:0px;bottom:0px;overflow:auto;">\n    <canvas class="srcCanvas"></canvas>\n    <div class="outline" style="position:absolute;border:1px solid #F00;"></div>\n</div>\n<canvas class="destCanvas" style="position:absolute;top:0px;left:0px;border:1px solid #66C;"></canvas>\n<canvas class="grid" style="position:absolute;top:0px;left:0px;border:1px solid #000;"></canvas>\n<div class="anim" style="position:absolute;left:0px;bottom:0px;"></div>\n<div class="content" style="position:absolute;top:0px;right:0px;font-size:10px;"></div>\n\n';
+        srcWrapper = el.getElementsByClassName("srcWrapper")[0];
+        srcCanvas = el.getElementsByClassName("srcCanvas")[0];
         srcCtx = srcCanvas.getContext("2d");
-        srcCanvas.style.position = "absolute";
-        srcCanvas.style.top = "0px";
-        srcCanvas.style.left = "0px";
-        srcCanvas.style.border = "1px solid #F60";
-        destCanvas = document.createElement("canvas");
-        el.appendChild(destCanvas);
+        destCanvas = el.getElementsByClassName("destCanvas")[0];
         destCtx = destCanvas.getContext("2d");
-        destCanvas.style.position = "absolute";
-        destCanvas.style.top = "0px";
-        destCanvas.style.left = "0px";
-        destCanvas.style.border = "1px solid #6666CC";
-        grid = document.createElement("canvas");
-        el.appendChild(grid);
+        grid = el.getElementsByClassName("grid")[0];
         gridCtx = grid.getContext("2d");
-        grid.style.position = "absolute";
-        grid.style.top = "0px";
-        grid.style.left = "0px";
-        grid.style.border = "1px solid #000000";
-        anim = document.createElement("div");
-        el.appendChild(anim);
-        anim.style.position = "absolute";
-        anim.style.left = "0px";
-        anim.style.bottom = "0px";
-        anim.addEventListener("click", animRender);
-        outline = document.createElement("div");
-        el.appendChild(outline);
-        outline.style.position = "absolute";
-        outline.style.border = "1px solid #FF0000";
-        content = document.createElement("div");
-        el.appendChild(content);
-        content.style.position = "absolute";
-        content.style.top = "0px";
-        content.style.right = "0px";
-        content.style.fontSize = "10px";
+        anim = el.getElementsByClassName("anim")[0];
+        content = el.getElementsByClassName("content")[0];
+        outline = el.getElementsByClassName("outline")[0];
         document.body.appendChild(el);
         update();
         window.addEventListener("keydown", function(event) {
@@ -229,7 +203,7 @@ exports.SpriteMapper = function() {
         }
     }
     function renderOutline() {
-        outline.style.left = width * scale + x + "px";
+        outline.style.left = x + "px";
         outline.style.top = y + "px";
         outline.style.width = width + "px";
         outline.style.height = height + "px";
@@ -238,7 +212,7 @@ exports.SpriteMapper = function() {
         console.log("onImageLoad");
         bgWidth = this.width;
         bgHeight = this.height;
-        srcCanvas.style.left = width * scale + "px";
+        srcWrapper.style.left = width * scale + "px";
         srcCanvas.width = bgWidth;
         srcCanvas.height = bgHeight;
         srcCtx.drawImage(this, 0, 0);
