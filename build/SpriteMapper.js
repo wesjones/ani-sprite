@@ -57,19 +57,19 @@ exports.SpriteMapper = function() {
             console.log(event.keyCode);
             var delta = event.shiftKey ? 10 : 1;
             if (event.keyCode === 39) {
-                self.x = x - delta;
-            } else if (event.keyCode === 37) {
                 self.x = x + delta;
+            } else if (event.keyCode === 37) {
+                self.x = x - delta;
             } else if (event.keyCode === 38) {
-                self.y = y + delta;
-            } else if (event.keyCode === 40) {
                 self.y = y - delta;
+            } else if (event.keyCode === 40) {
+                self.y = y + delta;
             } else if (event.keyCode === 87) {
-                self.height = height + delta;
+                self.height = height - delta;
             } else if (event.keyCode === 65) {
                 self.width = width - delta;
             } else if (event.keyCode === 83) {
-                self.height = height - delta;
+                self.height = height + delta;
             } else if (event.keyCode === 68) {
                 self.width = width + delta;
             } else if (event.keyCode === 88) {
