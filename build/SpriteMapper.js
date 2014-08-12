@@ -74,7 +74,7 @@ exports.SpriteMapper = function() {
                 self.width = width + delta;
             } else if (event.keyCode === 88) {
                 output.pop();
-            } else if (event.keyCode === 67) {
+            } else if (event.keyCode === 86) {
                 output.push({
                     x: -x,
                     y: -y,

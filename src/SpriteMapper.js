@@ -101,7 +101,7 @@ exports.SpriteMapper = function () {
                 self.width = width + delta;
             } else if (event.keyCode === 88) { // X
                 output.pop();
-            } else if (event.keyCode === 67) { // C
+            } else if (event.keyCode === 86) { // V
                 output.push({x:-x, y:-y, width:width, height:height});
             }
             var str = '', i = 0;
