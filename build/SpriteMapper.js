@@ -4,7 +4,7 @@
 */
 (function(exports, global){
 exports.SpriteMapper = function() {
-    var self = this, rendering = 0, dimensionsChange = true, imgData, outline, content, url, scale = 4, x = 0, y = 0, width = 100, height = 100, bgWidth = 100, bgHeight = 100, el, css, srcCanvas, srcCtx, destCanvas, destCtx, grid, gridCtx, output = [];
+    var self = this, rendering = 0, dimensionsChange = true, imgData, anim, outline, content, url, scale = 4, x = 0, y = 0, width = 100, height = 100, bgWidth = 100, bgHeight = 100, el, css, srcCanvas, srcCtx, destCanvas, destCtx, grid, gridCtx, output = [];
     function init() {
         el = document.createElement("div");
         el.className = "spriteMapper";
@@ -35,6 +35,12 @@ exports.SpriteMapper = function() {
         grid.style.top = "0px";
         grid.style.left = "0px";
         grid.style.border = "1px solid #000000";
+        anim = document.createElement("div");
+        el.appendChild(anim);
+        anim.style.position = "absolute";
+        anim.style.left = "0px";
+        anim.style.bottom = "0px";
+        anim.addEventListener("click", animRender);
         outline = document.createElement("div");
         el.appendChild(outline);
         outline.style.position = "absolute";
@@ -96,6 +102,7 @@ exports.SpriteMapper = function() {
     self.__defineSetter__("url", function(val) {
         if (url !== val) {
             url = val;
+            anim.style.background = "url('" + url + "') no-repeat";
             update();
         }
         return this;
@@ -137,6 +144,7 @@ exports.SpriteMapper = function() {
     self.__defineSetter__("width", function(val) {
         if (width !== val) {
             width = val;
+            anim.style.width = width + "px";
             dimensionsChange = true;
             update();
         }
@@ -148,6 +156,7 @@ exports.SpriteMapper = function() {
     self.__defineSetter__("height", function(val) {
         if (height !== val) {
             height = val;
+            anim.style.height = height + "px";
             dimensionsChange = true;
             update();
         }
@@ -178,6 +187,20 @@ exports.SpriteMapper = function() {
     function update() {
         clearTimeout(rendering);
         rendering = setTimeout(render, 100);
+    }
+    function animRender() {
+        output.index = output.index || 0;
+        var item = output[output.index];
+        if (item) {
+            anim.style.backgroundPosition = parseInt(item.x, 10) + parseInt(item.ox || 0, 10) + "px " + (parseInt(item.y, 10) + parseInt(item.oy || 0, 10)) + "px";
+            anim.style.width = item.width + "px";
+            anim.style.height = item.height + "px";
+            anim.innerText = output.index;
+            output.index += 1;
+            if (!output[output.index]) {
+                output.index = 0;
+            }
+        }
     }
     function render() {
         if (dimensionsChange) {
@@ -277,5 +300,9 @@ exports.SpriteMapper = function() {
         }
     }
     self.init = init;
+    self.updateOutput = function(items) {
+        output = items;
+    };
+    self.animRender = animRender();
 };
 }(this.ani = this.ani || {}, function() {return this;}()));
