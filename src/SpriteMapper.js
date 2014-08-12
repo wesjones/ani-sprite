@@ -52,52 +52,10 @@ exports.SpriteMapper = function () {
         destCtx = destCanvas.getContext('2d');
         grid = el.getElementsByClassName('grid')[0];
         gridCtx = grid.getContext('2d');
-        anim = el.getElementsByClassName('anim')[0];
         content = el.getElementsByClassName('content')[0];
         outline = el.getElementsByClassName('outline')[0];
-
-//        srcCanvas = document.createElement('canvas');
-//        el.appendChild(srcCanvas);
-//        srcCtx = srcCanvas.getContext('2d');
-//        srcCanvas.style.position = 'absolute';
-//        srcCanvas.style.top = '0px';
-//        srcCanvas.style.left = '0px';
-//        srcCanvas.style.border = "1px solid #F60";
-
-//        destCanvas = document.createElement('canvas');
-//        el.appendChild(destCanvas);
-//        destCtx = destCanvas.getContext('2d');
-//        destCanvas.style.position = 'absolute';
-//        destCanvas.style.top = '0px';
-//        destCanvas.style.left = '0px';
-//        destCanvas.style.border = "1px solid #6666CC";
-
-//        grid = document.createElement('canvas');
-//        el.appendChild(grid);
-//        gridCtx = grid.getContext('2d');
-//        grid.style.position = 'absolute';
-//        grid.style.top = '0px';
-//        grid.style.left = '0px';
-//        grid.style.border = "1px solid #000000";
-//
-//        anim = document.createElement('div');
-//        el.appendChild(anim);
-//        anim.style.position = 'absolute';
-//        anim.style.left = '0px';
-//        anim.style.bottom = '0px';
-//        anim.addEventListener('click', animRender);
-//
-//        outline = document.createElement('div');
-//        el.appendChild(outline);
-//        outline.style.position = 'absolute';
-//        outline.style.border = '1px solid #FF0000';
-//
-//        content = document.createElement('div');
-//        el.appendChild(content);
-//        content.style.position = 'absolute';
-//        content.style.top = '0px';
-//        content.style.right = '0px';
-//        content.style.fontSize = '10px';
+        anim = el.getElementsByClassName('anim')[0];
+        anim.addEventListener('click', animRender);
 
         document.body.appendChild(el);
         update();
@@ -375,6 +333,7 @@ exports.SpriteMapper = function () {
     self.init = init;
     self.updateOutput = function (items) {
         output = items;
+        animRender();
     };
     self.animRender = animRender();
 };

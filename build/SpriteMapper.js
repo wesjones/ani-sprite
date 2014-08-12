@@ -22,9 +22,10 @@ exports.SpriteMapper = function() {
         destCtx = destCanvas.getContext("2d");
         grid = el.getElementsByClassName("grid")[0];
         gridCtx = grid.getContext("2d");
-        anim = el.getElementsByClassName("anim")[0];
         content = el.getElementsByClassName("content")[0];
         outline = el.getElementsByClassName("outline")[0];
+        anim = el.getElementsByClassName("anim")[0];
+        anim.addEventListener("click", animRender);
         document.body.appendChild(el);
         update();
         window.addEventListener("keydown", function(event) {
@@ -288,6 +289,7 @@ exports.SpriteMapper = function() {
     self.init = init;
     self.updateOutput = function(items) {
         output = items;
+        animRender();
     };
     self.animRender = animRender();
 };
