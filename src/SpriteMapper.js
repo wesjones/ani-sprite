@@ -1,6 +1,8 @@
 exports.SpriteMapper = function () {
     var self = this,
+        img,
         rendering = 0,
+        urlChange = false,
         dimensionsChange = true,
         imgData,
         anim,
@@ -41,8 +43,8 @@ exports.SpriteMapper = function () {
 </div>\n\
 <canvas class=\"destCanvas\" style=\"position:absolute;top:0px;left:0px;border:1px solid #66C;\"></canvas>\n\
 <canvas class=\"grid\" style=\"position:absolute;top:0px;left:0px;border:1px solid #000;\"></canvas>\n\
-<div class=\"anim\" style=\"position:absolute;left:0px;bottom:0px;\"></div>\n\
-<div class=\"content\" style=\"position:absolute;top:0px;right:0px;font-size:10px;\"></div>\n\
+<div class=\"content\" style=\"position:absolute;top:100px;left:0px;font-size:10px;\"></div>\n\
+<div class=\"anim\" style=\"position:absolute;top:150px;left:0px;\"></div>\n\
 \n";
 
         srcWrapper = el.getElementsByClassName('srcWrapper')[0];
@@ -98,10 +100,10 @@ exports.SpriteMapper = function () {
             if (changed) {
                 var str = '', i = 0;
                 while (i < output.length) {
-                    str += JSON.stringify(output[i]) + "\n";
+                    str += JSON.stringify(output[i]).replace(/"/g,'') + "\n";
                     i += 1;
                 }
-                str += JSON.stringify({x:-x, y:-y, width:width, height:height}) + "\n";
+                str += JSON.stringify({x:-x, y:-y, width:width, height:height}).replace(/"/g,'') + "\n";
                 content.innerHTML = '<pre>' + str + '</pre>';
             }
         });
@@ -115,6 +117,7 @@ exports.SpriteMapper = function () {
         if (url !== val) {
             url = val;
             anim.style.background = "url('" + url + "') no-repeat";
+            urlChange = true;
             update();
         }
         return this;
@@ -226,14 +229,21 @@ exports.SpriteMapper = function () {
 
     function render() {
         if (dimensionsChange) {
-            var img = new Image();
-            img.onload = onImageLoad;
-            img.src = url;
+            if (urlChange || !img) {
+                img = img || new Image();
+                img.onload = onImageLoad;
+                img.src = url;
+                urlChange = false;
+            } else {
+                onImageLoad.apply(img);
+            }
         } else {
             imgData.offset = 0;
             imgData.ox = x;
             imgData.oy = y;
             destCtx.clearRect(0, 0, width * scale, height * scale);
+            content.style.top = height * scale + 'px';
+            anim.style.top = height * scale + content.offsetHeight + 'px';
             copyPixels(imgData);
             renderOutline();
         }
@@ -259,8 +269,10 @@ exports.SpriteMapper = function () {
 
         destCanvas.width = width * scale;
         destCanvas.height = height * scale;
-        destCtx.clearRect(0, 0, width * scale, height * scale);
         imgData = {src:srcData, ox:x, oy:y, offset:0};
+        destCtx.clearRect(0, 0, width * scale, height * scale);
+        content.style.top = height * scale + 'px';
+        anim.style.top = height * scale + content.offsetHeight + 'px';
         copyPixels(imgData);
         drawGrid();
         renderOutline();

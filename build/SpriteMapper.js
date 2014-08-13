@@ -4,7 +4,7 @@
 */
 (function(exports, global){
 exports.SpriteMapper = function() {
-    var self = this, rendering = 0, dimensionsChange = true, imgData, anim, outline, content, url, scale = 4, x = 0, y = 0, width = 100, height = 100, bgWidth = 100, bgHeight = 100, el, css, srcWrapper, srcCanvas, srcCtx, destCanvas, destCtx, grid, gridCtx, output = [];
+    var self = this, img, rendering = 0, urlChange = false, dimensionsChange = true, imgData, anim, outline, content, url, scale = 4, x = 0, y = 0, width = 100, height = 100, bgWidth = 100, bgHeight = 100, el, css, srcWrapper, srcCanvas, srcCtx, destCanvas, destCtx, grid, gridCtx, output = [];
     function init() {
         el = document.createElement("div");
         el.className = "spriteMapper";
@@ -14,7 +14,7 @@ exports.SpriteMapper = function() {
         css.left = "0px";
         css.width = "100%";
         css.height = "100%";
-        el.innerHTML = '<div class="srcWrapper" style="position:absolute;left:0px;right:0px;top:0px;bottom:0px;overflow:auto;">\n    <canvas class="srcCanvas"></canvas>\n    <div class="outline" style="position:absolute;border:1px solid #F00;"></div>\n</div>\n<canvas class="destCanvas" style="position:absolute;top:0px;left:0px;border:1px solid #66C;"></canvas>\n<canvas class="grid" style="position:absolute;top:0px;left:0px;border:1px solid #000;"></canvas>\n<div class="anim" style="position:absolute;left:0px;bottom:0px;"></div>\n<div class="content" style="position:absolute;top:0px;right:0px;font-size:10px;"></div>\n\n';
+        el.innerHTML = '<div class="srcWrapper" style="position:absolute;left:0px;right:0px;top:0px;bottom:0px;overflow:auto;">\n    <canvas class="srcCanvas"></canvas>\n    <div class="outline" style="position:absolute;border:1px solid #F00;"></div>\n</div>\n<canvas class="destCanvas" style="position:absolute;top:0px;left:0px;border:1px solid #66C;"></canvas>\n<canvas class="grid" style="position:absolute;top:0px;left:0px;border:1px solid #000;"></canvas>\n<div class="content" style="position:absolute;top:100px;left:0px;font-size:10px;"></div>\n<div class="anim" style="position:absolute;top:150px;left:0px;"></div>\n\n';
         srcWrapper = el.getElementsByClassName("srcWrapper")[0];
         srcCanvas = el.getElementsByClassName("srcCanvas")[0];
         srcCtx = srcCanvas.getContext("2d");
@@ -70,7 +70,7 @@ exports.SpriteMapper = function() {
             if (changed) {
                 var str = "", i = 0;
                 while (i < output.length) {
-                    str += JSON.stringify(output[i]) + "\n";
+                    str += JSON.stringify(output[i]).replace(/"/g, "") + "\n";
                     i += 1;
                 }
                 str += JSON.stringify({
@@ -78,7 +78,7 @@ exports.SpriteMapper = function() {
                     y: -y,
                     width: width,
                     height: height
-                }) + "\n";
+                }).replace(/"/g, "") + "\n";
                 content.innerHTML = "<pre>" + str + "</pre>";
             }
         });
@@ -90,6 +90,7 @@ exports.SpriteMapper = function() {
         if (url !== val) {
             url = val;
             anim.style.background = "url('" + url + "') no-repeat";
+            urlChange = true;
             update();
         }
         return this;
@@ -191,14 +192,21 @@ exports.SpriteMapper = function() {
     }
     function render() {
         if (dimensionsChange) {
-            var img = new Image();
-            img.onload = onImageLoad;
-            img.src = url;
+            if (urlChange || !img) {
+                img = img || new Image();
+                img.onload = onImageLoad;
+                img.src = url;
+                urlChange = false;
+            } else {
+                onImageLoad.apply(img);
+            }
         } else {
             imgData.offset = 0;
             imgData.ox = x;
             imgData.oy = y;
             destCtx.clearRect(0, 0, width * scale, height * scale);
+            content.style.top = height * scale + "px";
+            anim.style.top = height * scale + content.offsetHeight + "px";
             copyPixels(imgData);
             renderOutline();
         }
@@ -220,13 +228,15 @@ exports.SpriteMapper = function() {
         var srcData = srcCtx.getImageData(0, 0, bgWidth, bgHeight).data;
         destCanvas.width = width * scale;
         destCanvas.height = height * scale;
-        destCtx.clearRect(0, 0, width * scale, height * scale);
         imgData = {
             src: srcData,
             ox: x,
             oy: y,
             offset: 0
         };
+        destCtx.clearRect(0, 0, width * scale, height * scale);
+        content.style.top = height * scale + "px";
+        anim.style.top = height * scale + content.offsetHeight + "px";
         copyPixels(imgData);
         drawGrid();
         renderOutline();
