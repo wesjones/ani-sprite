@@ -80,6 +80,9 @@ module.exports = function (grunt) {
                     ],
                     './build/characters/hulk/hulk.js': [
                         'src/characters/hulk/**/*.js'
+                    ],
+                    './build/characters/battleDroid/battleDroid.js': [
+                        'src/characters/battleDroid/**/*.js'
                     ]
                 }
             }
