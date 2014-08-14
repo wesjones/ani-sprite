@@ -4,7 +4,7 @@
 */
 (function(exports, global){
 exports.SpriteMapper = function() {
-    var self = this, rendering = 0, dimensionsChange = true, imgData, anim, outline, content, url, scale = 4, x = 0, y = 0, width = 100, height = 100, bgWidth = 100, bgHeight = 100, el, css, srcCanvas, srcCtx, destCanvas, destCtx, grid, gridCtx, output = [];
+    var self = this, img, rendering = 0, urlChange = false, dimensionsChange = true, imgData, anim, outline, content, url, scale = 4, x = 0, y = 0, width = 100, height = 100, bgWidth = 100, bgHeight = 100, el, css, srcWrapper, srcCanvas, srcCtx, destCanvas, destCtx, grid, gridCtx, output = [];
     function init() {
         el = document.createElement("div");
         el.className = "spriteMapper";
@@ -14,43 +14,18 @@ exports.SpriteMapper = function() {
         css.left = "0px";
         css.width = "100%";
         css.height = "100%";
-        srcCanvas = document.createElement("canvas");
-        el.appendChild(srcCanvas);
+        el.innerHTML = '<div class="srcWrapper" style="position:absolute;left:0px;right:0px;top:0px;bottom:0px;overflow:auto;">\n    <canvas class="srcCanvas"></canvas>\n    <div class="outline" style="position:absolute;border:1px solid #F00;"></div>\n</div>\n<canvas class="destCanvas" style="position:absolute;top:0px;left:0px;border:1px solid #66C;"></canvas>\n<canvas class="grid" style="position:absolute;top:0px;left:0px;border:1px solid #000;"></canvas>\n<div class="content" style="position:absolute;top:100px;left:0px;font-size:10px;"></div>\n<div class="anim" style="position:absolute;top:150px;left:0px;"></div>\n\n';
+        srcWrapper = el.getElementsByClassName("srcWrapper")[0];
+        srcCanvas = el.getElementsByClassName("srcCanvas")[0];
         srcCtx = srcCanvas.getContext("2d");
-        srcCanvas.style.position = "absolute";
-        srcCanvas.style.top = "0px";
-        srcCanvas.style.left = "0px";
-        srcCanvas.style.border = "1px solid #F60";
-        destCanvas = document.createElement("canvas");
-        el.appendChild(destCanvas);
+        destCanvas = el.getElementsByClassName("destCanvas")[0];
         destCtx = destCanvas.getContext("2d");
-        destCanvas.style.position = "absolute";
-        destCanvas.style.top = "0px";
-        destCanvas.style.left = "0px";
-        destCanvas.style.border = "1px solid #6666CC";
-        grid = document.createElement("canvas");
-        el.appendChild(grid);
+        grid = el.getElementsByClassName("grid")[0];
         gridCtx = grid.getContext("2d");
-        grid.style.position = "absolute";
-        grid.style.top = "0px";
-        grid.style.left = "0px";
-        grid.style.border = "1px solid #000000";
-        anim = document.createElement("div");
-        el.appendChild(anim);
-        anim.style.position = "absolute";
-        anim.style.left = "0px";
-        anim.style.bottom = "0px";
+        content = el.getElementsByClassName("content")[0];
+        outline = el.getElementsByClassName("outline")[0];
+        anim = el.getElementsByClassName("anim")[0];
         anim.addEventListener("click", animRender);
-        outline = document.createElement("div");
-        el.appendChild(outline);
-        outline.style.position = "absolute";
-        outline.style.border = "1px solid #FF0000";
-        content = document.createElement("div");
-        el.appendChild(content);
-        content.style.position = "absolute";
-        content.style.top = "0px";
-        content.style.right = "0px";
-        content.style.fontSize = "10px";
         document.body.appendChild(el);
         update();
         window.addEventListener("keydown", function(event) {
@@ -95,7 +70,7 @@ exports.SpriteMapper = function() {
             if (changed) {
                 var str = "", i = 0;
                 while (i < output.length) {
-                    str += JSON.stringify(output[i]) + "\n";
+                    str += JSON.stringify(output[i]).replace(/"/g, "") + "\n";
                     i += 1;
                 }
                 str += JSON.stringify({
@@ -103,7 +78,7 @@ exports.SpriteMapper = function() {
                     y: -y,
                     width: width,
                     height: height
-                }) + "\n";
+                }).replace(/"/g, "") + "\n";
                 content.innerHTML = "<pre>" + str + "</pre>";
             }
         });
@@ -115,6 +90,7 @@ exports.SpriteMapper = function() {
         if (url !== val) {
             url = val;
             anim.style.background = "url('" + url + "') no-repeat";
+            urlChange = true;
             update();
         }
         return this;
@@ -216,20 +192,27 @@ exports.SpriteMapper = function() {
     }
     function render() {
         if (dimensionsChange) {
-            var img = new Image();
-            img.onload = onImageLoad;
-            img.src = url;
+            if (urlChange || !img) {
+                img = img || new Image();
+                img.onload = onImageLoad;
+                img.src = url;
+                urlChange = false;
+            } else {
+                onImageLoad.apply(img);
+            }
         } else {
             imgData.offset = 0;
             imgData.ox = x;
             imgData.oy = y;
             destCtx.clearRect(0, 0, width * scale, height * scale);
+            content.style.top = height * scale + "px";
+            anim.style.top = height * scale + content.offsetHeight + "px";
             copyPixels(imgData);
             renderOutline();
         }
     }
     function renderOutline() {
-        outline.style.left = width * scale + x + "px";
+        outline.style.left = x + "px";
         outline.style.top = y + "px";
         outline.style.width = width + "px";
         outline.style.height = height + "px";
@@ -238,20 +221,22 @@ exports.SpriteMapper = function() {
         console.log("onImageLoad");
         bgWidth = this.width;
         bgHeight = this.height;
-        srcCanvas.style.left = width * scale + "px";
+        srcWrapper.style.left = width * scale + "px";
         srcCanvas.width = bgWidth;
         srcCanvas.height = bgHeight;
         srcCtx.drawImage(this, 0, 0);
         var srcData = srcCtx.getImageData(0, 0, bgWidth, bgHeight).data;
         destCanvas.width = width * scale;
         destCanvas.height = height * scale;
-        destCtx.clearRect(0, 0, width * scale, height * scale);
         imgData = {
             src: srcData,
             ox: x,
             oy: y,
             offset: 0
         };
+        destCtx.clearRect(0, 0, width * scale, height * scale);
+        content.style.top = height * scale + "px";
+        anim.style.top = height * scale + content.offsetHeight + "px";
         copyPixels(imgData);
         drawGrid();
         renderOutline();
@@ -314,6 +299,7 @@ exports.SpriteMapper = function() {
     self.init = init;
     self.updateOutput = function(items) {
         output = items;
+        animRender();
     };
     self.animRender = animRender();
 };

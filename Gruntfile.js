@@ -77,6 +77,9 @@ module.exports = function (grunt) {
                     ],
                     './build/characters/soundNinja/soundNinja.js': [
                         'src/characters/soundNinja/**/*.js'
+                    ],
+                    './build/characters/hulk/hulk.js': [
+                        'src/characters/hulk/**/*.js'
                     ]
                 }
             }
