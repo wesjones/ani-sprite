@@ -1,12 +1,17 @@
 exports.cloneTrooper = function (clsName, actions) {
     var plr,
         frames = {
-            shoot: {
+            stance: {
                 start: function () {
                     if (!plr.friction) {
                         plr.speed = 0;
                     }
                 },
+                frames: [
+                    {x:-1,y:-1,width:42,height:57}
+                ]
+            },
+            shoot: {
                 frames: [
                     {x:-1,y:-1,width:42,height:57},
                     {x:-45,y:-1,width:42,height:57},
@@ -23,7 +28,11 @@ exports.cloneTrooper = function (clsName, actions) {
                     {x:-45,y:-61,width:42,height:57},
                     {x:-89,y:-61,width:42,height:57},
                     {x:-133,y:-60,width:42,height:58},
-                    {x:-177,y:-60,width:42,height:58}
+                    {x:-177,y:-60,width:42,height:58},
+                    {x:-221,y:-60,width:43,height:58},
+                    {x:-1,y:-121,width:43,height:57},
+                    {x:-46,y:-121,width:43,height:57}
+
 
                 ]
             }
