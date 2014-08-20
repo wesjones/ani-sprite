@@ -141,7 +141,7 @@
                 }
             }
             if (self.target) {
-                if (!self.isTargetInFront()) {
+                if (!self.isTargetInFront() && frames.turn) {
                     self.play("turn");
                     return;
                 }

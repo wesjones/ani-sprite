@@ -83,6 +83,9 @@ module.exports = function (grunt) {
                     ],
                     './build/characters/battleDroid/battleDroid.js': [
                         'src/characters/battleDroid/**/*.js'
+                    ],
+                    './build/characters/cloneTrooper/cloneTrooper.js': [
+                        'src/characters/cloneTrooper/**/*.js'
                     ]
                 }
             }
