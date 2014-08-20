@@ -43,7 +43,7 @@ exports.SpriteMapper = function () {
 </div>\n\
 <canvas class=\"destCanvas\" style=\"position:absolute;top:0px;left:0px;border:1px solid #66C;\"></canvas>\n\
 <canvas class=\"grid\" style=\"position:absolute;top:0px;left:0px;border:1px solid #000;\"></canvas>\n\
-<div class=\"content\" style=\"position:absolute;top:100px;left:0px;font-size:10px;\"></div>\n\
+<div class=\"content\" style=\"position:absolute;top:100px;left:0px;font-size:10px;background-color:#FFFFFF;\"></div>\n\
 <div class=\"anim\" style=\"position:absolute;top:300px;left:0px;\"></div>\n\
 \n";
 
