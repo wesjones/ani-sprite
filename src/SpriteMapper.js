@@ -44,7 +44,7 @@ exports.SpriteMapper = function () {
 <canvas class=\"destCanvas\" style=\"position:absolute;top:0px;left:0px;border:1px solid #66C;\"></canvas>\n\
 <canvas class=\"grid\" style=\"position:absolute;top:0px;left:0px;border:1px solid #000;\"></canvas>\n\
 <div class=\"content\" style=\"position:absolute;top:100px;left:0px;font-size:10px;\"></div>\n\
-<div class=\"anim\" style=\"position:absolute;top:150px;left:0px;\"></div>\n\
+<div class=\"anim\" style=\"position:absolute;top:300px;left:0px;\"></div>\n\
 \n";
 
         srcWrapper = el.getElementsByClassName('srcWrapper')[0];
@@ -243,7 +243,8 @@ exports.SpriteMapper = function () {
             imgData.oy = y;
             destCtx.clearRect(0, 0, width * scale, height * scale);
             content.style.top = height * scale + 'px';
-            anim.style.top = height * scale + content.offsetHeight + 'px';
+            content.style.left = '10px';
+            anim.style.top = height * scale + content.offsetHeight + 100 + 'px';
             copyPixels(imgData);
             renderOutline();
         }
