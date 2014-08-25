@@ -78,7 +78,15 @@ exports.battleDroid = function (clsName, actions) {
                     {x:-189,y:-76, width:46, height:53},
                     {x:-238,y:-76, width:54, height:53},
                     {x:-298,y:-75, width:58, height:53},
-                    {x:-364,y:-75, width:36, height:53},
+                    {x:-364,y:-75, width:36, height:53}
+                ]
+            },
+            fire: {
+                frames: [
+                    {x:-413,y:-100,width:14,height:4},
+                    {x:-434,y:-94,width:20,height:20},
+                    {x:-458,y:-86,width:28,height:31},
+                    {x:-488,y:-85,width:32,height:30}
                 ]
             },
         };

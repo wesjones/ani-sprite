@@ -14,7 +14,7 @@ exports.SpriteMapper = function() {
         css.left = "0px";
         css.width = "100%";
         css.height = "100%";
-        el.innerHTML = '<div class="srcWrapper" style="position:absolute;left:0px;right:0px;top:0px;bottom:0px;overflow:auto;">\n    <canvas class="srcCanvas"></canvas>\n    <div class="outline" style="position:absolute;border:1px solid #F00;"></div>\n</div>\n<canvas class="destCanvas" style="position:absolute;top:0px;left:0px;border:1px solid #66C;"></canvas>\n<canvas class="grid" style="position:absolute;top:0px;left:0px;border:1px solid #000;"></canvas>\n<div class="content" style="position:absolute;top:100px;left:0px;font-size:10px;"></div>\n<div class="anim" style="position:absolute;top:150px;left:0px;"></div>\n\n';
+        el.innerHTML = '<div class="srcWrapper" style="position:absolute;left:0px;right:0px;top:0px;bottom:0px;overflow:auto;">\n    <canvas class="srcCanvas"></canvas>\n    <div class="outline" style="position:absolute;border:1px solid #F00;"></div>\n</div>\n<canvas class="destCanvas" style="position:absolute;top:0px;left:0px;border:1px solid #66C;"></canvas>\n<canvas class="grid" style="position:absolute;top:0px;left:0px;border:1px solid #000;"></canvas>\n<div class="content" style="position:absolute;top:100px;left:0px;font-size:10px;background-color:#FFFFFF;"></div>\n<div class="anim" style="position:absolute;top:300px;left:0px;"></div>\n\n';
         srcWrapper = el.getElementsByClassName("srcWrapper")[0];
         srcCanvas = el.getElementsByClassName("srcCanvas")[0];
         srcCtx = srcCanvas.getContext("2d");
@@ -206,7 +206,8 @@ exports.SpriteMapper = function() {
             imgData.oy = y;
             destCtx.clearRect(0, 0, width * scale, height * scale);
             content.style.top = height * scale + "px";
-            anim.style.top = height * scale + content.offsetHeight + "px";
+            content.style.left = "10px";
+            anim.style.top = height * scale + content.offsetHeight + 100 + "px";
             copyPixels(imgData);
             renderOutline();
         }
