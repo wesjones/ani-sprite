@@ -40,7 +40,7 @@ module.exports = function (grunt) {
                 files: {
                     './build/<%= pkg.filename %>.js': [
                         'src/libs/**/*.js',
-                        'src/engine.js',
+                        'src/Engine.js',
                         'src/AniSprite.js'
                     ]
                 }
@@ -83,6 +83,9 @@ module.exports = function (grunt) {
                     ],
                     './build/characters/battleDroid/battleDroid.js': [
                         'src/characters/battleDroid/**/*.js'
+                    ],
+                    './build/characters/obiWanKenobi/obiWanKenobi.js': [
+                        'src/characters/obiWanKenobi/**/*.js'
                     ]
                 }
             }
