@@ -180,13 +180,72 @@ exports.soundNinja = function(clsName, actions) {
                 x: -313,
                 y: -194,
                 width: 43,
-                height: 48
+                height: 48,
+                after: function() {
+                    plr.addProjectile();
+                }
+            } ]
+        }
+    }, projectiles = {
+        fly: {
+            start: function(action, p) {
+                p.speed = p.reverse ? -10 : 10;
+            },
+            frames: [ {
+                x: -390,
+                y: -197,
+                width: 12,
+                height: 40
+            }, {
+                x: -410,
+                y: -197,
+                width: 12,
+                height: 40
+            }, {
+                x: -430,
+                y: -197,
+                width: 12,
+                height: 40
+            }, {
+                x: -450,
+                y: -197,
+                width: 12,
+                height: 40
+            } ]
+        },
+        hit: {
+            frames: [ {
+                x: -482,
+                y: -197,
+                width: 12,
+                height: 40
+            }, {
+                x: -501,
+                y: -197,
+                width: 13,
+                height: 40
+            }, {
+                x: -524,
+                y: -197,
+                width: 19,
+                height: 40
+            }, {
+                x: -549,
+                y: -197,
+                width: 32,
+                height: 40
+            }, {
+                x: -588,
+                y: -197,
+                width: 32,
+                height: 40
             } ]
         }
     };
     plr = new ani.AniSprite(clsName, {
         name: "soundNinja",
-        frames: frames
+        frames: frames,
+        projectiles: projectiles
     }, actions);
     return plr;
 };

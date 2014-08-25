@@ -84,13 +84,11 @@ module.exports = function (grunt) {
                     './build/characters/battleDroid/battleDroid.js': [
                         'src/characters/battleDroid/**/*.js'
                     ],
-<<<<<<< HEAD
                     './build/characters/obiWanKenobi/obiWanKenobi.js': [
                         'src/characters/obiWanKenobi/**/*.js'
-=======
+                    ],
                     './build/characters/cloneTrooper/cloneTrooper.js': [
                         'src/characters/cloneTrooper/**/*.js'
->>>>>>> f74c3d98e08d92f9c8363a2cae8cd09735fa817d
                     ]
                 }
             }

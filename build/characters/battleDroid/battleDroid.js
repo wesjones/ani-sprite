@@ -315,8 +315,6 @@ exports.battleDroid = function(clsName, actions) {
                 width: 36,
                 height: 53
             } ]
-<<<<<<< HEAD
-=======
         },
         fire: {
             frames: [ {
@@ -340,7 +338,6 @@ exports.battleDroid = function(clsName, actions) {
                 width: 32,
                 height: 30
             } ]
->>>>>>> f74c3d98e08d92f9c8363a2cae8cd09735fa817d
         }
     };
     plr = new ani.AniSprite(clsName, {

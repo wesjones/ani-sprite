@@ -245,6 +245,9 @@ function AniSprite(clsName, character, actions) {
     });
     this.__defineSetter__("defaultAni", function (val) {
         defaultAni = val;
+        if (!action) {
+            action = defaultAni;
+        }
     });
 
     this.getDistanceToTarget = function () {
@@ -282,7 +285,7 @@ function AniSprite(clsName, character, actions) {
         if (action.frames[index] && action.frames[index].immune) {
             return;
         }
-        action = frames[name] || frames.stance;
+        action = frames[name] || defaultAni;
         index = 0;
         wait = 0;
     };
@@ -351,6 +354,46 @@ function AniSprite(clsName, character, actions) {
         return;
     };
 
+    this.addProjectile = function() {
+        // we need to see if the character has projectiles
+        var elm = document.createElement('div');
+        elm.className = clsName + '-projectile';
+        elm.style.background = window.getComputedStyle(el).background;
+//        elm.style.border = "1px solid #FF0000";
+        el.parentNode.appendChild(elm);
+        var p = new ani.AniSprite(clsName + '-projectile', {name: character.name, frames:character.projectiles}),
+            life = 0,
+            lifeMax = 40;
+        p.reverse = self.reverse;
+        p.defaultAni = p.frames.fly;
+        p.x = self.x + (self.reverse ? -p.width : self.width);
+        p.y = ground;
+        p.ground = self.ground - ((self.height - p.height) * 0.5);
+        p.play("fly");
+        function onUpdate() {
+            life += 1;
+            //TODO: check for collision.
+            //TODO: check for death.
+
+            if (life >= lifeMax) {
+                engine.off(engine.events.UPDATE, onUpdate);
+                p.destroy();
+                el.parentNode.removeChild(elm);
+                p = null;
+            }
+        }
+        engine.on(engine.events.UPDATE, onUpdate);
+        return p;
+    };
+
+    this.destroy = function () {
+        engine.off(engine.events.UPDATE, controls);
+        engine.off(engine.events.UPDATE, update);
+        character = null;
+        frames = null;
+        self = null;
+    };
+
     function distanceBetweenPoints(p1, p2) {
         var xs = 0, ys = 0;
         xs = p2.x - p1.x;
@@ -389,10 +432,10 @@ function AniSprite(clsName, character, actions) {
         }
         f = fms[index];
         if (index === 0 && t.start) {
-            t.start(t);
+            t.start(t, self);
         }
         if (f.before) {
-            f.before(t);
+            f.before(t, self);
         }
         x += speed;
         if (y < ground) {
@@ -433,10 +476,10 @@ function AniSprite(clsName, character, actions) {
             wait = 0;
         }
         if (f.after) {
-            f.after(t);
+            f.after(t, self);
         }
         if (index === fms.length && t.end && wait >= t.wait) {
-            t.end(t);
+            t.end(t, self);
         }
     }
 
