@@ -1,5 +1,5 @@
 var engine = (function Engine() {
-    var timer, api = {};
+    var timer, api = {}, sprites = [];
     api.events = {
         UPDATE: 'aniSpriteEngine:update'
     };
@@ -19,6 +19,19 @@ var engine = (function Engine() {
     };
 
     api.step = update;
+
+    api.register = function(sprite) {
+        sprites.push(sprite);
+    };
+
+    api.unregister = function(sprite) {
+        var index = sprites.indexOf(sprite);
+        if (index !== -1) {
+            sprites.splice(index, 1);
+        }
+    };
+
+    api.sprites = sprites;
 
     belt.async.dispatcher(api);
     return api;

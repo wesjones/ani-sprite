@@ -381,7 +381,10 @@
             p.play("fly");
             function onUpdate() {
                 life += 1;
-                if (life >= lifeMax) {
+                if (life === lifeMax - character.projectiles.hit.frames.length) {
+                    p.speed = 0;
+                    p.play("hit");
+                } else if (life >= lifeMax) {
                     engine.off(engine.events.UPDATE, onUpdate);
                     p.destroy();
                     el.parentNode.removeChild(elm);
