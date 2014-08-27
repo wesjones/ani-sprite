@@ -53,7 +53,10 @@ exports.cloneTrooper = function(clsName, actions) {
                 x: -273,
                 y: -1,
                 width: 41,
-                height: 57
+                height: 57,
+                after: function() {
+                    plr.addProjectile();
+                }
             } ]
         },
         walk: {
@@ -348,10 +351,41 @@ exports.cloneTrooper = function(clsName, actions) {
                 wait: 2
             } ]
         }
+    }, projectiles = {
+        fly: {
+            start: function(action, p) {
+                p.speed = p.reverse ? -10 : 10;
+            },
+            frames: [ {
+                x: -149,
+                y: -201,
+                width: 14,
+                height: 4
+            } ]
+        },
+        hit: {
+            frames: [ {
+                x: -170,
+                y: -195,
+                width: 20,
+                height: 20
+            }, {
+                x: -194,
+                y: -187,
+                width: 28,
+                height: 31
+            }, {
+                x: -224,
+                y: -186,
+                width: 32,
+                height: 30
+            } ]
+        }
     };
     plr = new ani.AniSprite(clsName, {
         name: "cloneTrooper",
-        frames: frames
+        frames: frames,
+        projectiles: projectiles
     }, actions);
     return plr;
 };

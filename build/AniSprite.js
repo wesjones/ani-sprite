@@ -70,7 +70,7 @@
         return this;
     }());
     var engine = function Engine() {
-        var timer, api = {};
+        var timer, api = {}, sprites = [];
         api.events = {
             UPDATE: "aniSpriteEngine:update"
         };
@@ -86,11 +86,21 @@
             clearInterval(timer);
         };
         api.step = update;
+        api.register = function(sprite) {
+            sprites.push(sprite);
+        };
+        api.unregister = function(sprite) {
+            var index = sprites.indexOf(sprite);
+            if (index !== -1) {
+                sprites.splice(index, 1);
+            }
+        };
+        api.sprites = sprites;
         belt.async.dispatcher(api);
         return api;
     }();
     function AniSprite(clsName, character, actions) {
-        var self = this, y = 100, x = 100, ground = 500, reverse = false, ducked = false, target = null, targetMaxDistance = 400, frames = character.frames, defaultAni = frames.stance, action = defaultAni, index = 0, wait = 0, speed = 0, speedY = 0, damage = 0, friction = 0, gravity = .8, weight = 5, el, weakSpots = [];
+        var self = this, type = "character", y = 100, x = 100, ground = 500, reverse = false, ducked = false, target = null, targetMaxDistance = 400, frames = character.frames, defaultAni = frames.stance, action = defaultAni, index = 0, wait = 0, speed = 0, speedY = 0, damage = 0, friction = 0, gravity = .8, weight = 5, el, weakSpots = [];
         function Spot(x, y, radius, name) {
             this.x = x;
             this.y = y;
@@ -155,6 +165,12 @@
         this.actions = actions;
         this.__defineGetter__("name", function() {
             return clsName;
+        });
+        this.__defineGetter__("type", function() {
+            return type;
+        });
+        this.__defineSetter__("type", function(val) {
+            type = val;
         });
         this.__defineGetter__("action", function() {
             return action.name;
@@ -364,7 +380,7 @@
             }
             return;
         };
-        this.addProjectile = function() {
+        this.addProjectile = function(lifeMax) {
             var elm = document.createElement("div");
             elm.className = clsName + "-projectile";
             elm.style.background = window.getComputedStyle(el).background;
@@ -372,23 +388,50 @@
             var p = new ani.AniSprite(clsName + "-projectile", {
                 name: character.name,
                 frames: character.projectiles
-            }), life = 0, lifeMax = 40;
+            }), life = 0;
+            lifeMax = lifeMax || 40;
+            p.type = "projectile";
             p.reverse = self.reverse;
             p.defaultAni = p.frames.fly;
             p.x = self.x + (self.reverse ? -p.width : self.width);
             p.y = ground;
             p.ground = self.ground - (self.height - p.height) * .5;
             p.play("fly");
+            function stop() {
+                engine.off(engine.events.UPDATE, onUpdate);
+                p.destroy();
+                el.parentNode.removeChild(elm);
+                p = null;
+            }
+            p.stop = stop;
+            function hit(sprite) {
+                p.speed = 0;
+                p.play("hit");
+                if (sprite) {
+                    sprite.dispatch("hit", p);
+                }
+            }
+            function checkCollision() {
+                var i = 0, len = engine.sprites.length, sprite;
+                while (i < len) {
+                    sprite = engine.sprites[i];
+                    if (sprite !== self && sprite !== p) {
+                        if (!p.reverse && p.x - p.width > sprite.x && p.x < sprite.x + sprite.width) {
+                            hit(sprite);
+                        } else if (p.reverse && p.x < sprite.x + sprite.width && p.x > sprite.x) {
+                            hit(sprite);
+                        }
+                    }
+                    i += 1;
+                }
+            }
             function onUpdate() {
                 life += 1;
-                if (life === lifeMax - character.projectiles.hit.frames.length) {
-                    p.speed = 0;
-                    p.play("hit");
+                checkCollision();
+                if (character.projectiles.hit && life === lifeMax - character.projectiles.hit.frames.length) {
+                    hit();
                 } else if (life >= lifeMax) {
-                    engine.off(engine.events.UPDATE, onUpdate);
-                    p.destroy();
-                    el.parentNode.removeChild(elm);
-                    p = null;
+                    p.stop();
                 }
             }
             engine.on(engine.events.UPDATE, onUpdate);
@@ -397,6 +440,7 @@
         this.destroy = function() {
             engine.off(engine.events.UPDATE, controls);
             engine.off(engine.events.UPDATE, update);
+            engine.unregister(self);
             character = null;
             frames = null;
             self = null;
@@ -491,6 +535,7 @@
         belt.async.dispatcher(this);
         engine.on(engine.events.UPDATE, controls);
         engine.on(engine.events.UPDATE, update);
+        engine.register(self);
     }
     exports["engine"] = engine;
     exports["AniSprite"] = AniSprite;
