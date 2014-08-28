@@ -409,7 +409,7 @@
                 p.play("hit");
                 if (sprite) {
                     sprite.dispatch("hit", p);
-                    lifeMax = life + p.frames.hit.length;
+                    lifeMax = life + p.frames.hit.length - 1;
                 }
             }
             function checkCollision() {
