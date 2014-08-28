@@ -391,6 +391,7 @@ function AniSprite(clsName, character, actions) {
             p.play("hit");
             if (sprite) {
                 sprite.dispatch('hit', p);
+                lifeMax = life + p.frames.hit.length;
             }
         }
         function checkCollision() {
