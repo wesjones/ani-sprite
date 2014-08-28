@@ -391,8 +391,8 @@
             }), life = 0;
             lifeMax = lifeMax || 40;
             p.type = "projectile";
-            p.reverse = self.reverse;
             p.defaultAni = p.frames.fly;
+            p.reverse = self.reverse;
             p.x = self.x + (self.reverse ? -p.width : self.width);
             p.y = ground;
             p.ground = self.ground - (self.height - p.height) * .5;
