@@ -77,21 +77,33 @@ exports.obiWanKenobi = function (clsName, actions) {
             },
             jump: {
                 frames: [
-                    {x:-20,  y:-758, width:22, height:57, wait:2},
-                    {x:-120, y:-749, width:32, height:31, wait:2},
-                    {x:-170, y:-745, width:34, height:25, wait:2},
-                    {x:-230, y:-733, width:27, height:32, wait:2},
-                    {x:-290, y:-746, width:32, height:23, wait:2},
-                    {x:-350, y:-741, width:28, height:47, wait:2},
-                    {x:-410, y:-743, width:23, height:70, wait:2},
-                    {x:-470, y:-745, width:23, height:78, wait:2},
-                    {x:-520, y:-766, width:34, height:59, wait:2},
-                    {x:-580, y:-767, width:35, height:58, wait:2},
-                    {x:-640, y:-768, width:35, height:57, wait:2},
-                    {x:-700, y:-766, width:33, height:59, wait:2},
-                    {x:-760, y:-764, width:33, height:61, wait:2},
-                    {x:-820, y:-761, width:33, height:64, wait:2},
-                    {x:-820, y:-761, width:33, height:64, wait:2}   
+                    {x:-20,  y:-758, width:22, height:57, wait:2, before: function () {
+                        plr.y -= 40;
+                    }},
+                    {x:-120, y:-749, width:32, height:31, wait:2, before: function () {
+                        plr.y -= 40;
+                    }},
+                    {x:-170, y:-745, width:34, height:25, wait:0, before: function () {
+                        plr.y -= 40;
+                    }},
+                    {x:-230, y:-733, width:27, height:32, wait:0, before: function () {
+                        plr.y -= 20;
+                    }},
+                    {x:-290, y:-746, width:32, height:23, wait:0, before: function () {
+                        plr.y -= 10;
+                    }},
+                    {x:-350, y:-741, width:28, height:47, wait:0, before: function () {
+                        plr.y -= 5;
+                    }},
+                    {x:-410, y:-743, width:23, height:70, wait:0},
+                    {x:-470, y:-745, width:23, height:78, wait:0},
+                    {x:-520, y:-766, width:34, height:59, wait:0},
+                    {x:-580, y:-767, width:35, height:58, wait:0},
+                    {x:-640, y:-768, width:35, height:57, wait:0},
+                    {x:-700, y:-766, width:33, height:59, wait:0},
+                    {x:-760, y:-764, width:33, height:61, wait:0},
+                    {x:-820, y:-761, width:33, height:64, wait:0},
+                    {x:-820, y:-761, width:33, height:64, wait:0}
                 ]  
             }, 
             backflipKick: {
